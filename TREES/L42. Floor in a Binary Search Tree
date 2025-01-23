@@ -1,0 +1,23 @@
+class Solution{
+
+public:
+    void f(Node* root,int target,int &ans){
+        if(!root)return ;
+        if(target==root->data){
+            ans=target;
+            return ;
+        }
+        if(root->data>target){
+            f(root->left,target,ans);
+        }
+        else if(root->data<target){
+            ans=max(ans,root->data);
+            f(root->right,target,ans);
+        }
+    }
+    int floor(Node* root, int x) {
+        int ans=-1;
+        f(root,x,ans);
+        return ans;
+    }
+};

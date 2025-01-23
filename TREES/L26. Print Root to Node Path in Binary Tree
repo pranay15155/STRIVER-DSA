@@ -1,0 +1,20 @@
+class Solution {
+public:
+    void f(TreeNode* root, int x, vector<int>& temp, vector<int>& ans) {
+        if (root == NULL)
+            return;
+        temp.push_back(root->val);
+        if (root->val == x) {
+            ans = temp;
+        }
+        f(root->left, x, temp, ans);
+        f(root->right, x, temp, ans);
+        temp.pop_back();
+    }
+
+    vector<int> binaryTreePaths(TreeNode* root,int target) {
+        vector<int> temp, ans;
+        f(root, target, temp, ans);
+        return ans;
+    }
+};

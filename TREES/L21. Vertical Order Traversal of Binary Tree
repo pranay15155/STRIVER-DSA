@@ -1,0 +1,87 @@
+//USING VECETOR OF PAIR AND FOR SORTING USING COMPARATOR FUNCTION
+
+
+bool cmp(pair<int,int>a,pair<int,int>b){if (a.first!=b.first){return a.first<b.first;}return a.second<b.second;}
+class Solution {
+public:
+    void f(int ind,int level,TreeNode* root,map<int,vector<pair<int,int>>>&mp){
+        if(!root)return;
+        mp[ind].push_back({level,root->val});
+        f(ind-1,level+1,root->left,mp);
+        f(ind+1,level+1,root->right,mp);
+    }
+
+    vector<vector<int>> verticalTraversal(TreeNode* root) {
+        map<int,vector<pair<int,int>>>mp;//{level,value}
+        f(0,0,root,mp);
+        vector<vector<int>>ans;
+        for(auto &v:mp){
+            vector<pair<int,int>>temp=v.second;
+            sort(temp.begin(),temp.end(),cmp);
+            vector<int>q;
+            for(auto &t:temp){
+               q.push_back(t.second);
+            }
+            ans.push_back(q);
+        }
+        return ans;
+    }
+};
+
+
+//USING MAP OF MAP OF VECTOR  AND THEN SORTING THE VECTOR 
+
+class Solution {
+public:
+    void f(int ind,int level,TreeNode* root,map<int,map<int,vector<int>>>&mp){
+        if(!root)return;
+        mp[ind][level].push_back(root->val);
+        f(ind-1,level+1,root->left,mp);
+        f(ind+1,level+1,root->right,mp);
+    }
+
+    vector<vector<int>> verticalTraversal(TreeNode* root) {
+        map<int,map<int,vector<int>>>mp;//{level,value}
+        f(0,0,root,mp);
+        vector<vector<int>>ans;
+        for(auto &map2:mp){
+            vector<int>to_return;
+            for(auto &v:map2.second){
+                sort(v.second.begin(),v.second.end());
+                for(auto &x:v.second){
+                    to_return.push_back(x);
+                }
+            }
+            ans.push_back(to_return);
+        }
+        return ans;
+    }
+};
+
+//USING MAP OF MAP OF MULTISET 
+
+class Solution {
+public:
+    void f(int ind,int level,TreeNode* root,map<int,map<int,multiset<int>>>&mp){
+        if(!root)return;
+        mp[ind][level].insert(root->val);
+        f(ind-1,level+1,root->left,mp);
+        f(ind+1,level+1,root->right,mp);
+    }
+
+    vector<vector<int>> verticalTraversal(TreeNode* root) {
+        map<int,map<int,multiset<int>>>mp;//{level,value}
+        f(0,0,root,mp);
+        vector<vector<int>>ans;
+        for(auto &map2:mp){
+            vector<int>to_return;
+            for(auto &v:map2.second){
+                for(auto &x:v.second){
+                    to_return.push_back(x);
+                }
+            }
+            ans.push_back(to_return);
+        }
+        return ans;
+    }
+};

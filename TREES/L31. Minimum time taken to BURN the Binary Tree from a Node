@@ -1,0 +1,59 @@
+//https://leetcode.com/problems/amount-of-time-for-binary-tree-to-be-infected/
+
+
+
+class Solution {
+public:
+void f(TreeNode*root,map<TreeNode*,TreeNode*>&parent){
+        if(!root)return ;
+        if(root->left){
+            parent[root->left]=root;
+        }
+        if(root->right){
+            parent[root->right]=root;
+        }
+        f(root->left,parent);
+        f(root->right,parent);
+    }
+    TreeNode*f2(TreeNode* root,int target){
+        if(!root)return NULL;
+        if(root->val==target)return root;
+        TreeNode*a=f2(root->left,target);
+        TreeNode*b=f2(root->right,target);
+        if(a)return a;
+        return b;
+
+    }
+    
+    int amountOfTime(TreeNode* root, int start) {
+        map<TreeNode*,TreeNode*>parent;
+        map<TreeNode*,int>vis;
+        f(root,parent);
+        queue<TreeNode*>q;
+        TreeNode*target_node=f2(root,start);
+        q.push(target_node);
+        vis[target_node]=1;
+        int level=-1;
+        while(q.size()){
+            int size=q.size();
+            for(int i=0;i<size;i++){
+                TreeNode* node=q.front();
+                q.pop();
+                if(parent.find(node)!=parent.end() && vis[parent[node]]==0){
+                    q.push(parent[node]);
+                    vis[parent[node]]=1;
+                }
+                if(node->left && vis[node->left]==0){
+                       q.push(node->left);
+                       vis[node->left]=1;
+                }
+                if(node->right && vis[node->right]==0){
+                       q.push(node->right);
+                       vis[node->right]=1;
+                }
+            }
+            level++;
+        }
+        return level;
+    }
+};

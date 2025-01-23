@@ -1,0 +1,27 @@
+
+class BSTIterator {
+public:
+    stack<TreeNode*>st;
+    BSTIterator(TreeNode* root) {
+        f(root);
+    }
+    
+    int next() {
+        TreeNode*temp=st.top();
+        st.pop();
+        f(temp->right);
+        return temp->val;
+    }
+    
+    bool hasNext() {
+       return st.size()>0;
+
+    }
+    void f(TreeNode*root){
+        while(root){
+            st.push(root);
+            root=root->left;
+        }
+    }
+};
+

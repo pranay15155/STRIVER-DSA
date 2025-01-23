@@ -1,0 +1,21 @@
+class Solution{
+  public:
+    void f(Node* root, Node* target, Node* &node) {
+        if(!root) return;
+        
+        if(root->data > target->data) {
+            node = root;  // Update node as potential in-order successor
+            f(root->left, target, node);  // Move to left to find a closer successor
+        } 
+        else {
+            f(root->right, target, node);  // Move to right, as the current node cannot be the successor
+        }
+    }
+    
+    Node* inOrderSuccessor(Node* root, Node* x) {
+        if(!root) return NULL;
+        Node* node = NULL;
+        f(root, x, node);  // Call helper function to find the successor
+        return node;
+    }
+};

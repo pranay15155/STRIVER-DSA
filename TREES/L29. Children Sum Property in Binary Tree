@@ -1,0 +1,15 @@
+#define val data
+void changeTree(BinaryTreeNode < int > * root) {
+    if(!root)return;
+    if(root->left){
+         root->left->val=max(root->val,root->left->val);
+     }
+     if(root->right){
+         root->right->val=max(root->val,root->right->val);
+     }
+     changeTree(root->left);
+     changeTree(root->right);
+     int l=root->left!=NULL?root->left->val:0;
+     int r=root->right!=NULL?root->right->val:0;
+     root->val=max(root->val,l+r);
+}

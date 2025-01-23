@@ -1,0 +1,25 @@
+class Solution {
+  public:
+      void f(int ind, int level, Node* root, map<int, pair<int, int>>& mp) {
+        if (!root) return;
+        
+        if(mp[ind].first<=level){
+            mp[ind] = {level, root->data};
+ 
+        }
+        
+        f(ind - 1, level + 1, root->left, mp);
+        f(ind + 1, level + 1, root->right, mp);
+    }
+
+    vector <int> bottomView(Node *root) {
+        map<int, pair<int, int>> mp; // {horizontal distance -> {level, value}}
+        f(0, 0, root, mp);
+        
+        vector<int> ans;
+        for (auto& v : mp) {
+            ans.push_back(v.second.second); // Push the node value
+        }
+        return ans;
+    }
+};

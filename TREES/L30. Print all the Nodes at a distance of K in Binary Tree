@@ -1,0 +1,120 @@
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    void f(TreeNode* root,vector<int>adj[]){
+         if(!root)return;
+         if(root->left){
+            adj[root->val].push_back(root->left->val);
+            adj[root->left->val].push_back(root->val);
+         }
+         if(root->right){
+            adj[root->val].push_back(root->right->val);
+            adj[root->right->val].push_back(root->val);
+         }
+         f(root->left,adj);
+         f(root->right,adj);
+    }
+    vector<int> distanceK(TreeNode* root, TreeNode* target, int k) {
+        vector<int>adj[505];
+        vector<int>vis(505,0);
+        f(root,adj);
+        int level=0;
+        queue<int>q;
+        q.push(target->val);
+        vis[target->val]=1;
+        vector<int>ans;
+        while(q.size()){
+          int size=q.size();
+          for(int i=0;i<size;i++){
+            int a=q.front();
+            q.pop();
+            for(auto &x:adj[a]){
+              if(vis[x]==0){
+                vis[x]=1;
+                q.push(x);
+              }
+            }
+            if(level==k)ans.push_back(a);
+          }
+          level++;
+        }
+        return ans;
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    void f(TreeNode*root,map<TreeNode*,TreeNode*>&parent){
+        if(!root)return ;
+        if(root->left){
+            parent[root->left]=root;
+        }
+        if(root->right){
+            parent[root->right]=root;
+        }
+        f(root->left,parent);
+        f(root->right,parent);
+    }
+    vector<int> distanceK(TreeNode* root, TreeNode* target, int k) {
+        map<TreeNode*,TreeNode*>parent;
+        map<TreeNode*,int>vis;
+        f(root,parent);
+        queue<TreeNode*>q;
+        q.push(target);
+        vis[target]=1;
+        int level=0;
+        vector<int>ans;
+        while(q.size()){
+            int size=q.size();
+            for(int i=0;i<size;i++){
+                TreeNode* node=q.front();
+                q.pop();
+                if(level==k){
+                    ans.push_back(node->val);
+                }
+                if(parent.find(node)!=parent.end() && vis[parent[node]]==0){
+                    q.push(parent[node]);
+                    vis[parent[node]]=1;
+                }
+                if(node->left && vis[node->left]==0){
+                       q.push(node->left);
+                       vis[node->left]=1;
+                }
+                if(node->right && vis[node->right]==0){
+                       q.push(node->right);
+                       vis[node->right]=1;
+                }
+            }
+            level++;
+        }
+        return ans;
+    }
+};

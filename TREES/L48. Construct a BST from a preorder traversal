@@ -1,0 +1,19 @@
+class Solution {
+public:
+    TreeNode* f(int &index, vector<int>& preorder, int maxi) {
+        if (index == preorder.size() || preorder[index] > maxi) return NULL;
+        
+        TreeNode* node = new TreeNode(preorder[index]);
+        index++; 
+        
+        node->left = f(index, preorder, node->val);
+        node->right = f(index, preorder, maxi);
+        
+        return node;
+    }
+    
+    TreeNode* bstFromPreorder(vector<int>& preorder) {
+        int index = 0;
+        return f(index, preorder, INT_MAX);
+    }
+};

@@ -1,0 +1,21 @@
+void f(Node* root,int target,int &ans){
+    if(!root)return ;
+    if(target==root->data){
+        ans=target;
+        return;
+    }
+    else if(root->data<target){
+        f(root->right,target,ans);
+    }
+    else if(root->data>target){
+        ans=min(ans,root->data);
+        f(root->left,target,ans);
+    }
+}
+int findCeil(Node* root, int input) {
+   int ans=1e8;
+   f(root,input,ans);
+   if(ans==1e8)return -1;
+   return ans;
+   
+}
