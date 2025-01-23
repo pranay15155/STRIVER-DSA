@@ -1,0 +1,42 @@
+https://leetcode.com/problems/count-number-of-nice-subarrays/description/
+
+
+class Solution {
+public:
+    int f(vector<int>& nums, int target) {
+        int l = 0, r = 0;
+        int ans = 0;
+        int n = nums.size();
+        long long sum=0;
+        while(r<n){
+            sum+=nums[r];
+            while(sum>target && l<=r){
+                sum-=nums[l];
+                l++;
+            }
+            ans+=(r-l+1);
+            r++;
+        }
+        return ans;
+    }
+    int numberOfSubarrays(vector<int>& nums, int k) {
+        for (int i = 0; i < nums.size(); i++) {
+            if (nums[i] & 1)
+                nums[i] = 1;
+            else
+                nums[i] = 0;
+        }
+        int less=f(nums,k-1);
+        int equal=f(nums,k);
+        return equal-less;
+    }
+};
+
+//same problem as 930. Binary Subarrays With Sum
+//just what yu have to do is whichever index is odd number take it as 1
+//and even number as 0 and k will be target
+
+//and final answer will be f(target)-f(target-1)
+//f(target) gives all the subarray whose sum is less than or equal to target
+//f(target-1) gives all the subarray whose sum is less than or equal to target-1
+

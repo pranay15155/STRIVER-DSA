@@ -1,0 +1,86 @@
+https://leetcode.com/problems/subarrays-with-k-different-integers/description/
+
+
+class Solution {
+public:
+    int f(vector<int>& nums, int k) {
+        int l = 0, r = 0;
+        int n = nums.size();
+        int ans = 0;
+        unordered_map<int, int> mp;
+        while (r < n) {
+            mp[nums[r]]++;
+            while (mp.size() > k && l <= r) {
+                mp[nums[l]]--;
+                if (mp[nums[l]] == 0)
+                    mp.erase(nums[l]);
+                l++;
+            }
+            ans+=(r-l+1);
+            r++;
+        }
+        return ans;
+    }
+    int subarraysWithKDistinct(vector<int>& nums, int k) { 
+        int less=f(nums,k-1);
+        int equal=f(nums,k);
+        return equal-less;
+     }
+};
+
+
+// 1 2 1 2 3
+
+// given answer by my earlier code
+
+// 1 2          ->l r  0 1
+// 1 2 1        ->l r  0 2
+// 1 2 1 2      ->l r  0 3
+// 2 3          ->l r  3 4
+
+// correct answer
+
+// starting at index 0
+// 1 2 
+// 1 2 1
+// 1 2 1 2
+
+// index 1
+// 2 1 
+// 2 1 2
+
+// index 2
+// 1 2
+
+// index 3
+// 2 3
+
+//it is missing out on some of the subarrays why is that just print out and find out 
+//which subarrays are missing
+
+//this was my wrong code giving incorrect answers
+
+
+// class Solution {
+// public:
+//     int subarraysWithKDistinct(vector<int>& nums, int k) { 
+//         int l = 0, r = 0;
+//         int n = nums.size();
+//         int ans = 0;
+//         map<int, int> mp;
+//         while (r < n) {
+//             mp[nums[r]]++;
+//             while (mp.size() > k && l <= r) {
+//                 mp[nums[l]]--;
+//                 if (mp[nums[l]] == 0)mp.erase(nums[l]);
+//                 l++;
+//             }
+//             if(mp.size()==k){
+//                 ans++;
+//                 d2(l,r);
+//             }
+//             r++;
+//         }
+//         return ans;
+//      }
+// };

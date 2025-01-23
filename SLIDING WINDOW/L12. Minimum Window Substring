@@ -1,0 +1,39 @@
+https://leetcode.com/problems/minimum-window-substring/
+
+
+
+class Solution {
+public:
+    string minWindow(string s, string t) {
+        unordered_map<char, int> mp;
+        for (int i = 0; i < t.size(); i++) {
+            mp[t[i]]++;
+        }
+        int min_length = 1e8, start_index = 1e8;
+        int l = 0, r = 0;
+        int n = s.size();
+        int count = 0;
+        while (r < n) {
+            if (mp[s[r]] > 0) {
+                count++;
+            }
+            mp[s[r]]--;
+
+            while (count == t.size() && l <= r) {
+                if (min_length > r - l + 1) {
+                    min_length = r - l + 1;
+                    start_index = l;
+                }
+                mp[s[l]]++;
+                if (mp[s[l]] > 0)
+                    count--;
+                l++;
+            }
+            r++;
+        }
+        if (min_length == 1e8 && start_index == 1e8)return "";
+        // d2(min_length,start_index);
+        string ans = s.substr(start_index, min_length);
+        return ans;
+    }
+};

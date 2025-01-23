@@ -1,0 +1,77 @@
+https://leetcode.com/problems/binary-subarrays-with-sum/description/
+
+
+class Solution {
+public:
+    int f(vector<int>& nums, int target) {
+        int l = 0, r = 0;
+        int n = nums.size();
+        int ans = 0;
+        long long sum = 0;  
+        while (r < n) {
+            sum += nums[r];
+            while(sum > target && l <= r) {
+                sum -= nums[l];
+                l++;
+            }
+            ans+=(r-l+1);
+            // cout<<l<<" "<<r<<" "<<ans<<" "<<sum<<" "<<r-l+1<<endl;
+            r++;
+        }
+        return ans;
+    }
+    
+    int numSubarraysWithSum(vector<int>& nums, int goal) {
+        int less = f(nums, goal - 1);
+        int equal = f(nums, goal);
+        return equal - less;
+    }
+};
+
+// 1 0 1 0 1
+
+// target<=2
+
+// 1
+// 1 0
+// 1 0 1
+// 1 0 1 0
+
+// 0
+// 0 1
+// 0 1 0
+// 0 1 0 1
+
+// 1
+// 1 0
+// 1 0 1
+
+// 0
+// 0 1
+
+// 1
+
+// target<=1
+
+// 1
+// 1 0
+
+// 0
+// 0 1
+// 0 1 0
+
+// 1
+// 1 0
+
+// 0
+// 0 1
+
+// 1
+
+// we can see here that if we count subarrays that are less than or equal to
+// target is 14
+
+// and subarrrays sum  equal to target-1 is 10
+
+// if we subtract these two we get our subrrays whose sum is equal to target
+// whose numbers are 14-10=4

@@ -1,0 +1,88 @@
+https://leetcode.com/problems/longest-repeating-character-replacement/description/
+
+class Solution {
+public:
+    int f(map<char,int>&mp){
+        int maxi=0;
+        int count=0;
+        for(auto &[x,y]:mp){
+            maxi=max(maxi,y);
+            count+=y;
+        }
+        if(count==maxi)return 0;
+        count-=maxi;
+        return count;
+    }
+    int characterReplacement(string s, int k) {
+        int l=0,r=0;
+        int ans=0;
+        int n=s.size();
+        map<char,int>mp;
+        while(r<n){
+            mp[s[r]]++;
+            int used=f(mp);
+            while(used>k){
+                mp[s[l]]--;
+                if(mp[s[l]]==0)mp.erase(s[l]);
+                l++;
+                used=f(mp);
+            }
+            ans=max(ans,r-l+1);
+            r++;
+        }
+        return ans;
+    }
+};
+
+
+//1ST OPTIMIZATION =>>O(2N)*26 ->O(N)*26
+
+class Solution {
+public:
+    int characterReplacement(string s, int k) {
+        int l=0,r=0;
+        int ans=0;
+        int n=s.size();
+        int max_freq=0;
+        vector<int>dp(26,0);
+        while(r<n){
+            dp[s[r]-'A']++;
+            max_freq=max(max_freq,dp[s[r]-'A']);
+            if(r-l+1-max_freq>k){
+                dp[s[l]-'A']--;
+                max_freq=0;
+                for(int i=0;i<26;i++)max_freq=max(dp[i],max_freq);
+                l++;
+            }
+            if(r-l+1-max_freq<=k)ans=max(ans,r-l+1);
+            r++;
+        }
+        return ans;
+    }
+};
+
+//2ND OPTIMIZATION =>> O(N)*26 ->O(N)
+
+class Solution {
+public:
+    int characterReplacement(string s, int k) {
+        int l=0,r=0;
+        int ans=0;
+        int n=s.size();
+        int max_freq=0;
+        vector<int>dp(26,0);
+        while(r<n){
+            dp[s[r]-'A']++;
+            max_freq=max(max_freq,dp[s[r]-'A']);
+            if(r-l+1-max_freq>k){
+                dp[s[l]-'A']--;
+                max_freq=0;
+                // for(int i=0;i<26;i++)max_freq=max(dp[i],max_freq);
+                l++;
+            }
+            if(r-l+1-max_freq<=k)ans=max(ans,r-l+1);
+            r++;
+        }
+        return ans;
+    }
+};
