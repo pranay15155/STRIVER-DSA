@@ -1,0 +1,125 @@
+https://www.geeksforgeeks.org/problems/knapsack-with-duplicate-items4201/1?utm_source=youtube&utm_medium=collab_striver_ytdescription&utm_campaign=knapsack-with-duplicate-items
+
+
+//the difference in this and 0/1 knapsack is that in that question i can take the item only once but 
+//here i can take it as many times as i want
+
+class Solution {
+  public:
+   int f(int ind,int curr_weight,vector<int> &weight,vector<int> &value,int n, vector<vector<int>>&dp){
+    if(ind>=n || curr_weight<=0 )return 0;
+    if(dp[ind][curr_weight]!=-1)return dp[ind][curr_weight];
+    int take=0;
+    if(curr_weight>=weight[ind])take=value[ind]+f(ind,curr_weight-weight[ind],weight,value,n,dp);
+    int not_take=f(ind+1,curr_weight,weight,value,n,dp);
+    return dp[ind][curr_weight]=max(take,not_take);
+    }
+
+    int knapSack(vector<int>& val, vector<int>& wt, int capacity) {
+        int n=val.size();
+        vector<vector<int>>dp(n,vector<int>(capacity+1,-1));
+        return f(0,capacity,wt,val,n,dp);
+    }
+};
+//why if(curr_weight>=weight[ind])take=value[ind]+f(ind,curr_weight-weight[ind],weight,value,n,dp);
+//because see below example if we take weight with less capacity it is wrong and when weight 
+//goes negative we return 0 but we are already adding its value which is wrong 
+
+// 3 ->capacity
+// 1 2 3 ->value
+// 4 5 6 ->weight
+
+
+
+//MEMOIZATION *********************************************************************
+
+class Solution{
+public:
+ int f(int ind,int weight,int wt[],int val[],int n, vector<vector<int>>&dp){
+        if(ind==n-1){
+            if(weight>=wt[ind])return val[ind]*(weight/wt[ind]);
+            return 0;
+        }
+        if(dp[ind][weight]!=-1)return dp[ind][weight];
+        int take=(weight>=wt[ind])?val[ind]+f(ind,weight-wt[ind],wt,val,n,dp):0;
+        int not_take=f(ind+1,weight,wt,val,n,dp);
+        return dp[ind][weight]=max(take,not_take);
+    }
+
+    int knapSack(int N, int W, int val[], int wt[])
+    {
+      vector<vector<int>>dp(N,vector<int>(W+1,-1));
+      return f(0,W,wt,val,N,dp);
+    }
+};
+
+//TABULATION ************************************************************************
+
+class Solution{
+public:
+    int knapSack(int N, int W, int val[], int wt[])
+    {
+      vector<vector<int>>dp(N,vector<int>(W+1,0));
+      
+      for(int wgt=0;wgt<=W;wgt++){
+          dp[N-1][wgt]=(wgt/wt[N-1])*val[N-1];
+      }
+      for(int ind=N-2;ind>=0;ind--){
+          for(int wgt=0;wgt<=W;wgt++){
+            int take=(wgt>=wt[ind])?val[ind]+dp[ind][wgt-wt[ind]]:0;
+            int not_take=dp[ind+1][wgt];
+            dp[ind][wgt]=max(take,not_take);
+          }
+      }
+      return dp[0][W];
+    }
+};
+
+//METHOD--2
+
+class Solution{
+public:
+ 
+    int knapSack(int N, int W, int val[], int wt[])
+    {
+       vector<vector<int>>dp(N,vector<int>(W+1,0));
+       for(int row=N-1;row>=0;row--){
+           for(int w=0;w<=W;w++){
+               if(row==N-1){
+                   if(w>=wt[row])dp[row][w]=val[row]*(w/wt[row]);
+                   continue;
+               }
+               int take=w>=wt[row]?dp[row][w-wt[row]]+val[row]:0;
+               int not_take=dp[row+1][w];
+               dp[row][w]=max(take,not_take);
+           }
+       }
+       return dp[0][W];
+    }
+};
+
+//SPACE OPTIMIZATION **********************************************************************
+
+class Solution{
+public:
+    int knapSack(int N, int W, int val[], int wt[])
+    {
+      vector<int>prev(W+1,0);
+      
+      for(int wgt=0;wgt<=W;wgt++){
+          prev[wgt]=(wgt/wt[N-1])*val[N-1];
+      }
+      for(int ind=N-2;ind>=0;ind--){
+          vector<int>curr(W+1,0);
+          for(int wgt=0;wgt<=W;wgt++){
+            int take=(wgt>=wt[ind])?val[ind]+curr[wgt-wt[ind]]:0;
+            int not_take=prev[wgt];
+            curr[wgt]=max(take,not_take);
+          }
+          prev=curr;
+      }
+      return prev[W];
+    }
+};
+
+

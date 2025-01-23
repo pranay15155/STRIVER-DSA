@@ -1,0 +1,96 @@
+string findLCS(int n, int m,string &text1, string &text2){
+	 vector<vector<int>>dp(n+1,vector<int>(m+1,0));
+        dp[n-1][m-1]=(text1[n-1]==text2[m-1])?1:0;
+        for(int ind1=n-1;ind1>=0;ind1--){
+            for(int ind2=m-1;ind2>=0;ind2--){
+              int ans=0;
+              if(ind1==n-1 && ind2==m-1)continue;
+              if(text1[ind1]==text2[ind2])ans=1+dp[ind1+1][ind2+1];
+              if(text1[ind1]!=text2[ind2]){
+                if(ind1<n-1)ans=max(ans,dp[ind1+1][ind2]);
+                if(ind2<m-1)ans=max(ans,dp[ind1][ind2+1]);
+              }
+            dp[ind1][ind2]=ans;
+            }
+        }
+ 
+        string ans="";
+        int i=0,j=0;
+        while(i<n && j<m){
+            if (text1[i]==text2[j])
+            {
+                ans.push_back(text1[i]);
+                i++;
+                j++;
+            }
+            else if (dp[i+1][j]>dp[i][j+1])
+            {
+                i=i+1;
+            }
+            else{
+                j=j+1;
+            }
+        }
+        return ans;	
+}
+
+
+
+
+
+
+
+///////////////////////////////////////////////////
+
+class Solution
+{
+	public:
+	unordered_map<string,int>vis;
+	  void f(int current,int row,int col,string &text1,string &text2,string &s,set<string>&st,vector<vector<int>>&dp,int n,int m){
+	      if(row>=n || col>=m ||current==0){
+	          st.insert(s);
+	          return ;
+	      }
+	       string x=to_string(row)+"#"+to_string(col)+"#"+s;
+	        if(vis.count(x)>0)return;
+	         vis[x]++;
+	      if(text1[row]==text2[col]){
+	          s.push_back(text1[row]);
+	          f(current-1,row+1,col+1,text1,text2,s,st,dp,n,m);
+	          s.pop_back();
+	      }
+	      else{
+	          if(dp[row+1][col]>=dp[row][col+1] && dp[row+1][col]==current){
+	              f(current,row+1,col,text1,text2,s,st,dp,n,m);
+	          }
+	          if(dp[row][col+1]>=dp[row][col+1] && dp[row][col+1]==current){
+	              f(current,row,col+1,text1,text2,s,st,dp,n,m);
+	          }
+	      }
+	      return;
+	  }
+		vector<string> all_longest_common_subsequences(string text1, string text2)
+   {
+		    int n=text1.size(),m=text2.size();
+        vector<vector<int>>dp(n+1,vector<int>(m+1,0));
+        for(int ind1=n-1;ind1>=0;ind1--){
+            for(int ind2=m-1;ind2>=0;ind2--){
+                if(ind1==n-1 && ind2==m-1){
+                    dp[ind1][ind2]=text1[ind1]==text2[ind2]?1:0;
+                    continue;
+                }
+                if(text1[ind1]==text2[ind2]){
+                    dp[ind1][ind2]=dp[ind1+1][ind2+1]+1;
+                    continue;
+                }
+                dp[ind1][ind2]=max(dp[ind1+1][ind2],dp[ind1][ind2+1]);         
+            }
+        }
+        int limit=dp[0][0];
+        set<string>st;
+        string k;
+        f(limit,0,0,text1,text2,k,st,dp,n,m);
+        vector<string>ans(st.begin(),st.end());
+        return ans;
+	}
+};

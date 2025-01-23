@@ -1,0 +1,103 @@
+https://leetcode.com/problems/shortest-common-supersequence/description/
+
+
+
+
+class Solution {
+public:
+    string shortestCommonSupersequence(string str1, string str2) {
+        int n=str1.size();
+        int m=str2.size();
+        vector<vector<int>>dp(n+1,vector<int>(m+1,0));
+        str1.insert(str1.begin(),'A');
+        str2.insert(str2.begin(),'A');
+        for(int i=1;i<=n;i++){
+            for(int j=1;j<=m;j++){
+                if(str1[i]==str2[j]){
+                    dp[i][j]=1+dp[i-1][j-1];
+                }
+                else{
+                    dp[i][j]=max(dp[i-1][j],dp[i][j-1]);
+                }
+                // d3(i,j,dp[i][j]);
+            }
+        }
+        // d(dp);
+        string ans="";
+        int row=n;
+        int col=m;
+        while(row>0 && col>0){
+            // d3(row,col,ans);
+            if(str1[row]==str2[col]){
+                ans.push_back(str1[row]);
+                row--;
+                col--;
+            }
+            else{
+                if(dp[row-1][col]>=dp[row][col-1]){ //moving upward leaving current row hence pushing char present at that row in ans string
+                   ans.push_back(str1[row]);
+                   row--;
+                }
+                else {
+                    ans.push_back(str2[col]);//moving left leaving that column hence pushing char present at that column in ans string
+                    col--;
+                }
+            }
+        }
+        // d2(row,col);
+        while(row)ans.push_back(str1[row--]); //why here while and not if checkout testcase below
+        while(col)ans.push_back(str2[col--]);
+        reverse(ans.begin(),ans.end());
+        return ans;
+    }
+};
+//why while and not if
+//str1="bcacaaab"
+//str2="bbabaccc"
+
+//to better understand it checkout my ipad notes 
+
+
+//JUST ANOTHER WAY OF TABULATION
+
+class Solution {
+public:
+    string shortestCommonSupersequence(string text1, string text2) {
+         int n=text1.size(),m=text2.size();
+        vector<vector<int>>dp(n+1,vector<int>(m+1,0));
+        for(int ind1=n-1;ind1>=0;ind1--){
+            for(int ind2=m-1;ind2>=0;ind2--){
+                if(ind1==n-1 && ind2==m-1){
+                    dp[ind1][ind2]=text1[ind1]==text2[ind2]?1:0;
+                    continue;
+                }
+                if(text1[ind1]==text2[ind2]){
+                    dp[ind1][ind2]=dp[ind1+1][ind2+1]+1;
+                    continue;
+                }
+                dp[ind1][ind2]=max(dp[ind1+1][ind2],dp[ind1][ind2+1]);         
+            }
+        }
+        string ans;
+        int i=0,j=0;
+        while(i<n && j<m){
+            if(text1[i]==text2[j]){
+                ans+=text1[i];
+                i++;
+                j++;
+                continue;
+            }
+            if(dp[i][j+1]>=dp[i+1][j]){
+                 ans+=text2[j];
+                 j++;
+            }
+            else{
+                ans+=text1[i];
+                i++;
+            }
+        }
+        while(i<n)ans+=text1[i++];
+        while(j<m)ans+=text2[j++];
+        return ans;
+    }
+};

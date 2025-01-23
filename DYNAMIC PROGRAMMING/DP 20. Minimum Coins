@@ -1,0 +1,118 @@
+https://leetcode.com/problems/coin-change/
+
+class Solution {
+public:
+    int n;
+    int f(int ind,int amount,vector<int>& coins,vector<vector<int>>&dp){
+        if(ind>=n || amount<0)return 1e8;
+        if(amount==0)return 0;
+        if(dp[ind][amount]!=-1)return dp[ind][amount];
+        int take=1+f(ind,amount-coins[ind],coins,dp);
+        int not_take=f(ind+1,amount,coins,dp);
+        return dp[ind][amount]=min(take,not_take);
+    }
+    int coinChange(vector<int>& coins, int amount) {
+        n=coins.size();
+        vector<vector<int>>dp(n,vector<int>(amount+1,-1));
+        return f(0,amount,coins,dp)==1e8?-1:f(0,amount,coins,dp);
+    }
+};
+
+
+//MEMOIZATION *****************************************************************
+
+class Solution {
+public:
+int n;
+    int f(int ind ,int amount,vector<int>& coins,vector<vector<int>>&dp){
+        if(ind==n-1)return ((amount%coins[ind]==0)?(amount/coins[ind]):1e8);
+        if(dp[ind][amount]!=-1)return dp[ind][amount];
+        int take=(amount>=coins[ind])?(f(ind,amount-coins[ind],coins,dp)+1):1e8;
+        int not_take=f(ind+1,amount,coins,dp);
+        return dp[ind][amount]=min(take,not_take);
+    }
+    int coinChange(vector<int>& coins, int amount) {
+         n=coins.size();
+         vector<vector<int>>dp(n,vector<int>(amount+1,-1));
+         int ans=f(0,amount,coins,dp);
+         return ((ans==1e8)?-1:ans);
+    }
+};
+
+
+//TABULATION **************************************************************************
+
+class Solution {
+public:
+    int n;
+    int coinChange(vector<int>& coins, int amount) {
+        n = coins.size();
+        vector<vector<long long int>> dp(n, vector<long long int>(amount + 1, 1e8));
+
+        for (int amt = 0; amt <= amount; amt++) {
+            if (amt % coins[n - 1] == 0) {
+                dp[n - 1][amt] = amt / coins[n - 1];
+            }
+        }
+        for (int ind = n - 2; ind >= 0; ind--) {
+            for (int amt = 0; amt <= amount; amt++) {
+                long long int take =(amt >= coins[ind]) ? (dp[ind][amt - coins[ind]] + 1) : 1e8;
+                long long int not_take = dp[ind + 1][amt];
+                dp[ind][amt] = min(take, not_take);
+            }
+        }
+        long long int result = dp[0][amount];
+        return (result >= 1e8) ? -1 : result;
+    }
+};
+
+//METHOD-2
+
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+        int n=coins.size();
+        vector<vector<int>>dp(n,vector<int>(amount+1,1e8));
+        for(int ind=n-1;ind>=0;ind--){
+            for(int target=0;target<=amount;target++){
+                if(ind==n-1){
+                   if(target%coins[ind]==0)dp[ind][target]=target/coins[ind];
+                   continue;
+                }
+                int take=(target>=coins[ind])?dp[ind][target-coins[ind]]+1:1e8;
+                int not_take=dp[ind+1][target];
+                dp[ind][target]=min(take,not_take);
+            }
+        }
+        return dp[0][amount]==1e8?-1:dp[0][amount];
+
+    }
+};
+
+//SPACE OPTIMIZATION *****************************************************************
+
+class Solution {
+public:
+    int n;
+    int coinChange(vector<int>& coins, int amount) {
+        n = coins.size();
+        vector<long long int>prev(amount + 1, 1e8);
+
+        for (int amt = 0; amt <= amount; amt++) {
+            if (amt % coins[n - 1] == 0) {
+                prev[amt] = amt / coins[n - 1];
+            }
+        }
+        for (int ind = n - 2; ind >= 0; ind--) {
+            vector<long long int>curr(amount + 1, 1e8);
+            for (int amt = 0; amt <= amount; amt++) {
+                long long int take =(amt >= coins[ind]) ? (curr[amt - coins[ind]] + 1) : 1e8;
+                long long int not_take = prev[amt];
+                curr[amt] = min(take, not_take);
+            }
+            prev=curr;
+        }
+        long long int result = prev[amount];
+        return (result >= 1e8) ? -1 : result;
+    }
+};

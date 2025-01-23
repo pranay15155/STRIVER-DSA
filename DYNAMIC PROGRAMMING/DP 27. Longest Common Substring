@@ -1,0 +1,121 @@
+https://leetcode.com/problems/maximum-length-of-repeated-subarray/description/
+
+https://www.geeksforgeeks.org/problems/longest-common-substring1452/1
+
+class Solution {
+  public:
+  int lcs(string& n1, string& n2, int i, int j, int &ans, vector<vector<int>>&dp){
+        if (i >= n1.size() || j >= n2.size()) return 0; 
+        if(dp[i][j]!=-1) return dp[i][j];
+        int cur = 0;
+        if (n1[i] == n2[j]){
+            cur = lcs(n1, n2, i + 1, j + 1, ans, dp)+1; 
+        }
+        lcs(n1, n2, i, j + 1, ans, dp);
+        lcs(n1, n2, i + 1, j, ans, dp);
+        ans = max(ans, cur);
+        return dp[i][j] = cur;
+    } 
+    int longestCommonSubstr(string& s1, string& s2) {
+        int n = s1.size(), m = s2.size();
+        vector<vector<int>>dp(n+1,vector<int>(m+1,-1));
+        int ans = 0;
+        lcs(s1, s2, 0, 0, ans, dp);
+        return ans;
+    }
+};
+//it is a very clever approach actually 
+//we needed third state as ans to store if at previous iteration
+//the characters were same or not 
+//but due to 3d dp we are getting MLE 
+//so he passed ans by reference because we just need to find out maximum value 
+//of ans and we donot actually need to memoise it hence 
+//running the code correctly without wasting space 
+
+////MEMOISATION /////////////////////////////////////////////////////
+
+class Solution{
+    public:
+    int f(int ind1,int ind2,string s1, string s2, int n, int m,vector<vector<int>>&dp){
+        if(ind1>=n || ind2>=m)return 0;
+        if(dp[ind1][ind2]!=-1)return dp[ind1][ind2];
+        if(s1[ind1]==s2[ind2]){
+            return dp[ind1][ind2]=1+f(ind1+1,ind2+1,s1,s2,n,m,dp);
+        }
+        return dp[ind1][ind2]=0;
+    }
+    int longestCommonSubstr (string s1, string s2, int n, int m)
+    {
+        vector<vector<int>>dp(n,vector<int>(m,-1));
+        int ans=0;
+        for(int i=n-1;i>=0;i--){
+            for(int j=m-1;j>=0;j--){
+                ans=max(ans,f(i,j,s1,s2,n,m,dp));
+            }
+        }
+        return ans;
+    }
+};
+
+
+/////////////TABULATION //////////////////////////////////////////////////////
+
+class Solution{
+    public:
+    
+    int longestCommonSubstr (string text1, string text2, int n, int m)
+    {
+         vector<vector<int>>dp(n+1,vector<int>(m+1,0));
+        dp[n-1][m-1]=(text1[n-1]==text2[m-1])?1:0;
+        int ans=0;
+        for(int ind1=n-1;ind1>=0;ind1--){
+            for(int ind2=m-1;ind2>=0;ind2--){
+              if(ind1==n-1 && ind2==m-1)continue;
+              if(text1[ind1]==text2[ind2])dp[ind1][ind2]=1+dp[ind1+1][ind2+1];
+              else dp[ind1][ind2]=0;
+              ans=max(ans,dp[ind1][ind2]);
+            }
+        }
+        return ans;
+    }
+};
+
+//METHOD--2//////////////////////////////
+
+
+class Solution{
+    public:
+    
+    int longestCommonSubstr (string s1, string s2, int n, int m)
+    {
+        vector<vector<int>>dp(n+1,vector<int>(m+1,0));
+        int ans=0;
+        for(int i=n-1;i>=0;i--){
+            for(int j=m-1;j>=0;j--){
+               if(s1[i]==s2[j])dp[i][j]=1+dp[i+1][j+1];
+               ans=max(ans,dp[i][j]);
+            }
+        }
+        return ans;
+    }
+};
+
+//SPACE OPTIMIZATION ///////////////////////////////////
+
+class Solution{
+    public:
+    
+    int longestCommonSubstr (string s1, string s2, int n, int m)
+    {
+        vector<int>prev(m+1,0);
+        int ans=0;
+        for(int i=n-1;i>=0;i--){
+            vector<int>curr(m+1,0);
+            for(int j=m-1;j>=0;j--){
+               if(s1[i]==s2[j])curr[j]=1+prev[j+1];
+               ans=max(ans,curr[j]);
+            }prev=curr;
+        }
+        return ans;
+    }
+};

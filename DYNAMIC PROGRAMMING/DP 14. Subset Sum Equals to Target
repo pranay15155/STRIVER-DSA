@@ -1,0 +1,100 @@
+https://www.geeksforgeeks.org/problems/subset-sum-problem-1611555638/1
+
+https://www.naukri.com/code360/problems/subset-sum-equal-to-k_1550954?leftPanelTab=1%3Fsource%3Dyoutube&campaign=striver_dp_videos&utm_source=youtube&utm_medium=affiliate&utm_campaign=striver_dp_videos
+
+
+class Solution {
+  public:
+    // int n;
+    int f(int ind,int sum,vector<int>& arr,vector<vector<int>>&dp,int n){
+        if(sum==0)return 1;
+        if(sum<0 ||ind>=n)return 0;
+        if(dp[ind][sum]!=-1)return dp[ind][sum];
+        int take=f(ind+1,sum-arr[ind],arr,dp,n);
+        int not_take=f(ind+1,sum,arr,dp,n);
+        return dp[ind][sum]=take||not_take;
+    }
+    bool isSubsetSum(vector<int>& arr, int target) {
+        int n=arr.size();
+        vector<vector<int>>dp(n+5,vector<int>(target+1,-1));
+        return f(0,target,arr,dp,n);
+        
+    }
+};
+
+
+//MEMOIZATION ********************************************************************************************
+
+class Solution{   
+public:
+    bool f(int ind,int target,vector<vector<int>>&dp,vector<int>&arr){
+        if(target<0 || ind>=arr.size())return 0;
+        if(target==arr[ind])return dp[ind][arr[ind]]=1;
+        if(dp[ind][target]!=-1)return dp[ind][target];
+        bool take=f(ind+1,target-arr[ind],dp,arr);
+        bool not_take=f(ind+1,target,dp,arr);
+        return dp[ind][ target]=take||not_take;
+    }
+    bool isSubsetSum(vector<int>arr, int sum){
+       vector<vector<int>>dp(arr.size(),vector<int>(sum+1,-1));
+       return f(0,sum,dp,arr);
+    }
+};
+
+//TABULATION **********************************************************************************************
+
+ bool isSubsetSum(vector<int>arr, int sum){
+        int n=arr.size();
+       vector<vector<int>>dp(arr.size(),vector<int>(sum+1,0));
+        for (int ind = n - 1; ind >= 0; --ind)
+    {
+        dp[ind][0] = true;
+        for (int tar = 1; tar <= sum; ++tar)
+        {
+            if (ind == n - 1)
+            {
+                if (arr[n - 1] <= sum)
+                {
+                    dp[n - 1][arr[n - 1]] = true;
+                }
+                continue;
+            }
+            int take = (tar >= arr[ind]) ? dp[ind + 1][tar - arr[ind]] : false;
+            int not_take = dp[ind + 1][tar];
+            dp[ind][tar] = take || not_take;
+        }
+    }
+        return dp[0][sum];
+    }
+
+//SPACE OPTIMIZATION ***************************************************************************************
+
+
+class Solution{   
+public:
+
+    bool isSubsetSum(vector<int>arr, int sum){
+        int n=arr.size();
+       vector<int>prev(sum+1,0);
+        for (int ind = n - 1; ind >= 0; --ind)
+    {
+        vector<int>curr(sum+1,0);
+        prev[0] = true;
+        for (int tar = 1; tar <= sum; ++tar)
+        {
+            if (ind == n - 1)
+            {
+                if (arr[n - 1] <= sum)
+                {
+                    curr[arr[n - 1]] = true;
+                }
+                continue;
+            }
+            int take = (tar >= arr[ind]) ? prev[tar - arr[ind]] : false;
+            int not_take = prev[tar];
+            curr[tar] = take || not_take;
+        }
+        prev=curr;
+    }
+        return prev[sum];
+    }

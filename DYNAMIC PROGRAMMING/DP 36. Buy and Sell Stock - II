@@ -1,0 +1,109 @@
+https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/description/
+
+
+
+class Solution {
+public:
+int n;
+int dp[30005][2];
+    int f(int ind,int buy,vector<int>& prices){
+        if(ind>=prices.size())return 0;
+        if(dp[ind][buy]!=-1)return dp[ind][buy];
+        int ans=0;
+        if(buy){  //here i am buying the stocks
+         ans=-prices[ind]+f(ind+1,0,prices);//buying the stock at current index and will sell in future
+         ans=max(ans,f(ind+1,1,prices)); //will buy stock in future
+        }
+        else{  //selling the stocks buyed before at maximum profit
+            ans=prices[ind]+f(ind+1,1,prices); //selling the stock at current index and may buy another stock in future f(ind+1,1,prices)
+            ans=max(ans,f(ind+1,0,prices)); //will sell stock at future index 
+        }
+        return dp[ind][buy]=ans;
+    }
+    int maxProfit(vector<int>& prices) {
+        memset(dp,-1,sizeof(dp));
+        return f(0,1,prices);
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+//MEMOISATION //////////////////////////////////
+
+class Solution {
+public:
+int n;
+    int f(int ind,int buy,vector<int>& prices,vector<vector<int>>&dp){
+        if(ind>=n)return 0;
+        if(dp[ind][buy]!=-1)return dp[ind][buy];
+        int ans=0;
+        if(buy){
+            ans=max(-prices[ind]+f(ind+1,0,prices,dp),f(ind+1,1,prices,dp));
+        }
+        else ans=max(prices[ind]+f(ind+1,1,prices,dp),f(ind+1,0,prices,dp));
+        return dp[ind][buy]=ans;
+    }
+    int maxProfit(vector<int>& prices) {
+        n=prices.size();
+        vector<vector<int>>dp(n,vector<int>(2,-1));
+        return f(0,1,prices,dp);
+    }
+};
+//buy=1 -->buying is possible
+
+
+
+//TABULATION /////////////////////////////////
+
+class Solution {
+public:
+int n;
+    int maxProfit(vector<int>& prices) {
+       n=prices.size();
+        vector<vector<int>>dp(n+1,vector<int>(2,0));
+        for(int ind=n-1;ind>=0;ind--){
+            for(int buy=0;buy<2;buy++){
+                if(buy){
+                    dp[ind][buy]=max(-prices[ind]+dp[ind+1][0],dp[ind+1][1]);
+                }
+                else dp[ind][buy]=max(prices[ind]+dp[ind+1][1],dp[ind+1][0]);
+            }
+        }
+        return dp[0][1];
+
+    }
+};
+//buy=1 -->buying is possible
+
+
+//SPACE OPTIMIZATION /////////////////////////////
+
+
+class Solution {
+public:
+int n;
+    int maxProfit(vector<int>& prices) {
+       n=prices.size();
+        vector<int>prev(2,0);
+        for(int ind=n-1;ind>=0;ind--){
+            vector<int>curr(2,0);
+            for(int buy=0;buy<2;buy++){
+                if(buy){
+                    curr[buy]=max(-prices[ind]+prev[0],prev[1]);
+                }
+                else curr[buy]=max(prices[ind]+prev[1],prev[0]);
+            }prev=curr;
+        }
+        return prev[1];
+
+    }
+};
+//buy=1 -->buying is possible

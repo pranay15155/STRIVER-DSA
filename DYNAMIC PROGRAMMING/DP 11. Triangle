@@ -1,0 +1,99 @@
+https://leetcode.com/problems/triangle/description/
+
+
+class Solution {
+public:
+    int n,m;
+    int dp[205][205];
+    int f(int row,int col,vector<vector<int>>& triangle){
+        if(row==n-1)return triangle[row][col];
+        if(row>=n || col>row)return 1e8;
+        if(dp[row][col]!=-1)return dp[row][col];
+        int down=f(row+1,col,triangle);
+        int down_right=f(row+1,col+1,triangle);
+        return dp[row][col]=min(down,down_right)+triangle[row][col];
+    }
+    int minimumTotal(vector<vector<int>>& triangle) {
+        n=triangle.size();
+        m=triangle[n-1].size();
+        memset(dp,-1,sizeof(dp));
+        return f(0,0,triangle);
+
+    }
+};
+//2
+//3 4
+//6 5 7 
+//4 1 8 3
+
+//MEMOIZATION ****************************************************************************************************
+
+class Solution {
+public:
+    int f(int row,int col,vector<vector<int>>& triangle,vector<vector<int>>& dp){
+      if(row==0 && col==0)return triangle[0][0];
+      if(col>row || col<0)return 1e8;
+      if(dp[row][col]!=-1)return dp[row][col];
+      int up=f(row-1,col,triangle,dp);
+      int left=f(row-1,col-1,triangle,dp);
+      return dp[row][col]=triangle[row][col]+min(up,left);
+    }
+    int minimumTotal(vector<vector<int>>& triangle) {
+        int n=triangle.size(),m=triangle[n-1].size();
+        vector<vector<int>>dp(n,vector<int>(m,-1));
+        int ans=1e8;
+        for(int i=0;i<m;i++){
+            ans=min(ans,f(n-1,i,triangle,dp));
+        }
+        return ans;
+    }
+};
+
+
+//TABULATION ******************************************************************************************************
+
+class Solution {
+public:
+    int minimumTotal(vector<vector<int>>& triangle) {
+        int n=triangle.size(),m=triangle[n-1].size();
+        vector<vector<int>>dp(n,vector<int>(m,-1));
+        for(int row=0;row<n;row++){
+            for(int col=0;col<=row && col<m;col++){
+                if(row==0 && col==0){
+                    dp[row][col]=triangle[row][col];
+                    continue;
+                }
+                int up=(col<row)?dp[row-1][col]:1e8;
+                int up_left=(col-1>=0)?dp[row-1][col-1]:1e8;
+                dp[row][col]=triangle[row][col]+min(up,up_left); 
+            }
+        }
+        return *min_element(dp[n-1].begin(),dp[n-1].end());
+    }
+};
+
+
+//SPACE OPTIMIZATION ***********************************************************************************************
+
+
+class Solution {
+public:
+    int minimumTotal(vector<vector<int>>& triangle) {
+        int n=triangle.size(),m=triangle[n-1].size();
+        vector<int>prev(m,-1);
+        for(int row=0;row<n;row++){
+            vector<int>curr(m,-1);
+            for(int col=0;col<=row && col<m;col++){
+                if(row==0 && col==0){
+                    curr[col]=triangle[row][col];
+                    continue;
+                }
+                int up=(col<row)?prev[col]:1e8;
+                int up_left=(col-1>=0)?prev[col-1]:1e8;
+                curr[col]=triangle[row][col]+min(up,up_left); 
+            }
+            prev=curr;
+        }
+        return *min_element(prev.begin(),prev.end());
+    }
+};

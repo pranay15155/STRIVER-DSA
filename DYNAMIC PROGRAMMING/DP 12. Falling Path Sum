@@ -1,0 +1,124 @@
+https://leetcode.com/problems/minimum-falling-path-sum/description/
+
+class Solution {
+public:
+    int n, m;
+    int dp[105][105];
+    int f(int row, int col, vector<vector<int>>& matrix) {
+        if (row >= n || col >= m || row < 0 || col < 0)
+            return 1e8;
+        if (row == n - 1) {
+            return matrix[row][col];
+        }
+        if (dp[row][col] != -1e6) return dp[row][col];
+        int down = f(row + 1, col, matrix);
+        int down_left = f(row + 1, col - 1, matrix);
+        int down_right = f(row + 1, col + 1, matrix);
+
+        return dp[row][col] =matrix[row][col] + min({down, down_right, down_left});
+    }
+
+    int minFallingPathSum(vector<vector<int>>& matrix) {
+        n = matrix.size();
+        m = matrix[0].size();
+        //-1 can be a possible answer hence we cannot take -1 as non visited
+        //recursion value
+        for (int i = 0; i < 105; i++) {
+            for (int j = 0; j < 105; j++) {
+                dp[i][j] = -1e6;
+            }
+        }
+        int ans = 1e8;
+        for (int i = 0; i < m; i++) {
+            ans = min(ans, f(0, i, matrix));
+        }
+        return ans;
+    }
+};
+
+
+
+
+//MEMOIZATION ********************************************************************************************************
+
+class Solution {
+public:
+    int n, m;
+    int f(int row, int col, vector<vector<int>>& grid,vector<vector<int>>& dp) {
+        if (row >= n || col >= m || col<0)return 1e8;
+        if (row == n - 1)return grid[n - 1][col];
+        if (dp[row][col] != 1000005)return dp[row][col];
+        int down_right = f(row+1, col + 1, grid, dp);
+        int down = f(row + 1, col, grid, dp);
+        int down_left = f(row+1, col -1 , grid, dp);
+        return dp[row][col] = grid[row][col] +min(down, min(down_right, down_left));
+    }
+    int minFallingPathSum(vector<vector<int>>& grid) {
+        n = grid.size();
+        m = grid[0].size();
+        vector<vector<int>> dp(n, vector<int>(m, 1000005));
+        int ans=1e8;
+        for(int i=0;i<m;i++){
+            ans=min(ans,f(0,i,grid,dp));
+        }
+        return ans;
+    }
+};
+
+//TABULATION *********************************************************************************************************
+
+class Solution {
+public:
+    int minFallingPathSum(vector<vector<int>>& grid) {
+        int n = grid.size();
+        int m = grid[0].size();
+        vector<vector<int>> dp(n, vector<int>(m, 1000005));
+        for(int row=n-1;row>=0;row--){
+            for(int col=m-1;col>=0;col--){
+                 if(row==n-1){
+                    dp[row][col]=grid[row][col];
+                    continue;
+                 }
+                 int down=dp[row+1][col];
+                 int down_right=(col+1<=m-1)?dp[row+1][col+1]:1e8;
+                 int down_left=(col-1>=0)?dp[row+1][col-1]:1e8;
+                 dp[row][col]=grid[row][col]+min(down,min(down_left,down_right));
+            }
+        }
+        int ans=1e8;
+        for(int col=0;col<n;col++){
+            ans=min(ans,dp[0][col]);
+        }
+        return ans;
+    }
+};
+
+//SPACE OPTIMIZATION *************************************************************************************************************
+
+class Solution {
+public:
+    int minFallingPathSum(vector<vector<int>>& grid) {
+        int n = grid.size();
+        int m = grid[0].size();
+        vector<int>prev(m, 1000005);
+        for(int row=n-1;row>=0;row--){
+            vector<int>curr(m, 1000005);
+            for(int col=m-1;col>=0;col--){
+                 if(row==n-1){
+                    curr[col]=grid[row][col];
+                    continue;
+                 }
+                 int down=prev[col];
+                 int down_right=(col+1<=m-1)?prev[col+1]:1e8;
+                 int down_left=(col-1>=0)?prev[col-1]:1e8;
+                 curr[col]=grid[row][col]+min(down,min(down_left,down_right));
+            }
+            prev=curr;
+        }
+        int ans=1e8;
+        for(int col=0;col<n;col++){
+            ans=min(ans,prev[col]);
+        }
+        return ans;
+    }
+};

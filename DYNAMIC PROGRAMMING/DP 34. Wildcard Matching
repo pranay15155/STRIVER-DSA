@@ -1,0 +1,57 @@
+https://leetcode.com/problems/wildcard-matching/description/
+
+
+class Solution {
+public:
+    int n,m;
+    int f(int ind1,int ind2,string &s,string &p,vector<vector<int>>&dp){
+        if(ind1==n && ind2==m )return 1;
+        if(ind2==m && ind1<n)return 0; //when string p is exhausted but string s has some extra character than it is not possible hence return 0
+        if(ind1==n){
+            if(p[ind2]=='*')return f(ind1,ind2+1,s,p,dp);
+            else return 0;
+        }
+        if(dp[ind1][ind2]!=-1)return dp[ind1][ind2];
+        if(s[ind1]==p[ind2])return dp[ind1][ind2]=f(ind1+1,ind2+1,s,p,dp);
+        if(p[ind2]=='?')return dp[ind1][ind2]=f(ind1+1,ind2+1,s,p,dp);
+        if(p[ind2]=='*')return dp[ind1][ind2]=max(f(ind1+1,ind2,s,p,dp),f(ind1,ind2+1,s,p,dp));   
+        return dp[ind1][ind2]=0;
+    }
+    bool isMatch(string s, string p) {
+        n=s.size();
+        m=p.size();
+        vector<vector<int>>dp(n,vector<int>(m,-1));
+        return f(0,0,s,p,dp);
+
+        //why f(ind1,ind2+1,s,p,dp) on line 14 
+        //because of this testcase
+        //s="adceb"
+        //p="*a*b"
+        //in this first * is empty and hence we need to increase index of string p without increasing index of s 
+
+
+        //why f(ind1+1,ind2,s,p,dp) on line 14 
+        //because of this testcase
+        //s="adceb"
+        //p="*a*b"
+        //in this i am increasing indexes of s so that 2nd single * in p can replace various characters in s
+
+
+        // why this base case ?
+        // if(ind1==n){
+        //     if(p[ind2]=='*')return f(ind1,ind2+1,s,p,dp);
+        //     else return 0;
+        // }
+
+        // for this testcase
+        //s=""
+        //p="******"
+
+        //even when string s is exhausted string p has stars but they can be 
+        //taken empty that is what i have taken in base case i simply increase indexes of p and call recursion
+
+       
+    }
+};
+
+

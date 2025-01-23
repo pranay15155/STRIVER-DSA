@@ -1,0 +1,100 @@
+
+//LOWER BOUND
+
+class Solution {
+  public:
+    int lower_bound(vector<long long> v, long long n, long long x) {
+        long long low=0,high=n-1,ans=-1;
+        while(low<=high){
+            long long mid=high-((high-low)/2);
+            if(v[mid]<=x){
+                ans=mid;
+                low=mid+1;
+            }
+            else high=mid-1;
+        }
+        return ans;
+    }
+};
+
+
+//UPPER BOUND
+
+class Solution {
+  public:
+    int upper_bound(vector<long long> v, long long n, long long x) {
+
+        long long low=0,high=n-1,ans=-1;
+        while(low<=high){
+            long long mid=high-((high-low)/2);
+            if(v[mid]>x){
+                ans=mid;
+                high=mid-1;
+            }
+            else low=mid+1;
+        }
+        return ans;
+    }
+};
+
+
+//FLOOR AND CEIL -->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+int floor(vector<int>&v,int n,int x){
+    int low=0,high=n-1,ans=-1;
+        while(low<=high){
+            int mid=high-((high-low)/2);
+            if(v[mid]<=x){
+                ans=v[mid];
+                low=mid+1;
+            }
+            else high=mid-1;
+        }
+        return ans;
+}
+
+int ceil(vector<int>&v,int n,int x){
+    int low=0,high=n-1,ans=-1;
+        while(low<=high){
+            int mid=high-((high-low)/2);
+            if(v[mid]>=x){
+                ans=v[mid];
+                high=mid-1;
+            }
+            else low=mid+1;
+        }
+        return ans;
+}
+
+pair<int, int> getFloorAndCeil(int arr[], int n, int x) {
+    vector<int>v;
+    for(int i=0;i<n;i++){
+        v.push_back(arr[i]);
+    }
+    sort(v.begin(),v.end());
+    int low=floor(v,n,x);
+    int high=ceil(v,n,x);
+    return {low,high};
+    
+}
+
+//INSERT SEARCH POSITION 
+
+class Solution {
+public:
+    int searchInsert(vector<int>& nums, int target) {
+        int low=0,high=nums.size()-1;
+        int ans=-1;
+        while(low<=high){
+            int mid=(low+high)/2;
+            if(nums[mid]==target)return mid;
+            else if(nums[mid]<target){
+                ans=mid;
+                low=mid+1;
+            }
+            else high=mid-1;
+        }
+        return ans+1;
+    }
+};
+

@@ -1,0 +1,51 @@
+https://leetcode.com/problems/house-robber/description/
+
+//METHOD 1 doing it via 2d vector in which there are 2 parameter one is index and other is taken 
+//taken will decide we will consider this index or not
+
+
+class Solution {
+public:
+ int n;
+    int f(int ind,int taken,vector<int>& nums,vector<vector<int>>&dp){
+        if(ind==n-1){
+            if(taken==1)return nums[ind];
+            else return 0;
+        }
+        if(dp[ind][taken]!=-1)return dp[ind][taken];
+        int take=0,not_take=0;
+        if(taken==1)take=nums[ind]+f(ind+1,0,nums,dp);
+        not_take=f(ind+1,1,nums,dp);
+        return dp[ind][taken]=max(take,not_take);
+    }
+    int rob(vector<int>& nums) {
+       n=nums.size(); 
+       vector<vector<int>>dp(n,vector<int>(2,-1));
+       return f(0,1,nums,dp);
+    }
+};
+//using 2d DP
+//if taken =1 it means we can take value at current index
+//if 0 it means we cannot take it
+
+
+//METHOD 2
+class Solution {
+public:
+ int n;
+    int f(int ind,vector<int>& nums,vector<int>&dp){
+        if(ind>=n)return 0;
+        if(dp[ind]!=-1)return dp[ind];
+        int take=nums[ind]+f(ind+2,nums,dp);
+        int not_take=f(ind+1,nums,dp);
+        return dp[ind]=max(take,not_take);
+    }
+    int rob(vector<int>& nums) {
+       n=nums.size(); 
+       vector<int>dp(n+1,-1);
+       return f(0,nums,dp);
+    }
+};
+
+//using 1d DP we just leave the indexes which we not consider at that iteration 
+//very clever way to do it indeed

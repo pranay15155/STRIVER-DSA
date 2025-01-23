@@ -1,0 +1,19 @@
+https://www.naukri.com/code360/problems/frog-jump_3621012?source=youtube&campaign=striver_dp_videos&utm_source=youtube&utm_medium=affiliate&utm_campaign=striver_dp_videos&leftPanelTabValue=PROBLEM
+
+https://www.geeksforgeeks.org/problems/geek-jump/1?utm_source=youtube&utm_medium=collab_striver_ytdescription&utm_campaign=geek-jump
+
+#include <bits/stdc++.h> 
+
+int f(int ind,vector<int>&dp,int n,vector<int> &heights){
+   if(ind==n-1)return 0;
+   if(dp[ind]!=-1)return dp[ind];
+   int one=1e8,two=1e8;
+   if(ind+1<n)one=abs(heights[ind]-heights[ind+1])+f(ind+1,dp,n,heights);
+   if(ind+2<n)two=abs(heights[ind]-heights[ind+2])+f(ind+2,dp,n,heights);
+   return dp[ind]=min(one,two);
+}
+int frogJump(int n, vector<int> &heights)
+{
+     vector<int>dp(n+1,-1);
+     return f(0,dp,n,heights);
+}

@@ -1,0 +1,71 @@
+https://leetcode.com/problems/minimum-insertion-steps-to-make-a-string-palindrome/
+
+///MEMOISATION 
+
+class Solution {
+public:
+    int n,m;
+    int f(int ind1,int ind2,string &s1,string &s2,vector<vector<int>>&dp){
+        if(ind1>=n || ind2>=m)return 0;
+        if(ind1==n-1 && ind2==m-1)return s1[ind1]==s2[ind2]?1:0;
+        if(dp[ind1][ind2]!=-1)return dp[ind1][ind2];
+        if(s1[ind1]==s2[ind2])return dp[ind1][ind2]=1+f(ind1+1,ind2+1,s1,s2,dp);
+        int one=f(ind1+1,ind2,s1,s2,dp);
+        int two=f(ind1,ind2+1,s1,s2,dp);
+        return dp[ind1][ind2]=max(one,two);
+    }
+    int minInsertions(string s) {
+        n=s.size(),m=n;
+        string k=s;
+        reverse(k.begin(),k.end());
+        vector<vector<int>>dp(n,vector<int>(m,-1));
+        return n-f(0,0,s,k,dp);
+    }
+};
+
+//TABULATION 
+
+class Solution {
+public:
+    int n,m;
+    int minInsertions(string s) {
+        n=s.size(),m=n;
+        string k=s;
+        reverse(k.begin(),k.end());
+        vector<vector<int>>dp(n+1,vector<int>(m+1,0));
+        for(int ind1=n-1;ind1>=0;ind1--){
+            for(int ind2=m-1;ind2>=0;ind2--){
+                if(s[ind1]==k[ind2]){
+                    dp[ind1][ind2]=1+dp[ind1+1][ind2+1];
+                    continue;
+                }
+                dp[ind1][ind2]=max(dp[ind1+1][ind2],dp[ind1][ind2+1]);
+            }
+        }
+        return n-dp[0][0];
+    }
+};
+
+//SPACE OPTIMIZATION
+
+class Solution {
+public:
+    int n,m;
+    int minInsertions(string s) {
+        n=s.size(),m=n;
+        string k=s;
+        reverse(k.begin(),k.end());
+        vector<int>prev(m+1,0);
+        for(int ind1=n-1;ind1>=0;ind1--){
+            vector<int>curr(m+1,0);
+            for(int ind2=m-1;ind2>=0;ind2--){
+                if(s[ind1]==k[ind2]){
+                    curr[ind2]=1+prev[ind2+1];
+                    continue;
+                }
+                curr[ind2]=max(prev[ind2],curr[ind2+1]);
+            }prev=curr;
+        }
+        return n-prev[0];
+    }
+};

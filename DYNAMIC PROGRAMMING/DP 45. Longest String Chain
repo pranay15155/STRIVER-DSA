@@ -1,0 +1,36 @@
+class Solution {
+public:
+static bool comparator(string &a ,string &b){
+    return a.size()<b.size();
+}
+int f(string &s1,string &s2){
+    if(s1.size()+1!=s2.size())return 0;
+    int i=0,j=0,count=0;
+    while(j<s2.size()){
+        if(s1[i]==s2[j]){
+            i++;
+            j++;
+        }
+        else {
+            j++;
+            count++;
+        }
+    }
+    if(count==1)return 1;
+    return 0;
+}
+    int longestStrChain(vector<string>& words) {
+        sort(words.begin(),words.end(),comparator);
+        vector<int>dp(words.size(),1);
+        int ans=1;
+        for(int i=0;i<words.size();i++){
+            for(int j=0;j<i;j++){
+                if(f(words[j],words[i]) && dp[i]<dp[j]+1){
+                    dp[i]=1+dp[j];
+                }
+                ans=max(ans,dp[i]);
+            }
+        }
+        return ans;
+    }
+};

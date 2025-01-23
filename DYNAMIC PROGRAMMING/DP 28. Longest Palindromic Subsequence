@@ -1,0 +1,29 @@
+https://leetcode.com/problems/longest-palindromic-subsequence/description/
+
+//same as lcs problem just take one string from forward and second string reversed and apply lcs on both to form longest palindrome 
+
+class Solution {
+public:
+int n,m;
+    int f(int ind1,int ind2,string &text1, string &text2,vector<vector<int>>&dp){
+        if(ind1==n-1 && ind2==m-1)return (text1[ind1]==text2[ind2])?1:0;
+        if(ind1>=n || ind2>=m)return 0;
+        if(dp[ind1][ind2]!=-1)return dp[ind1][ind2];
+        int ans=0;
+        if(text1[ind1]==text2[ind2])ans=1+f(ind1+1,ind2+1,text1,text2,dp);
+        if(text1[ind1]!=text2[ind2]){
+            ans=max(f(ind1,ind2+1,text1,text2,dp),f(ind1+1,ind2,text1,text2,dp));
+        }
+        return dp[ind1][ind2]=ans;
+    }
+    int longestPalindromeSubseq(string s) {
+        string text1=s;
+        reverse(s.begin(),s.end());
+        string text2=s;
+         n=text1.size();
+        m=text2.size();
+        vector<vector<int>>dp(n,vector<int>(m,-1));
+        return f(0,0,text1,text2,dp);
+
+    }
+};

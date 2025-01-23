@@ -1,0 +1,47 @@
+https://leetcode.com/problems/best-time-to-buy-and-sell-stock/description/
+
+
+
+class Solution {
+public:
+int n;
+int dp[100005][2];
+    int f(int ind,int buy,vector<int>& prices){
+        if(ind>=prices.size())return 0;
+        if(dp[ind][buy]!=-1)return dp[ind][buy];
+        int ans=0;
+        if(buy){ //here i am buying the stocks
+         ans=-prices[ind]+f(ind+1,0,prices);  //buying the stocks at current index=> -prices[ind],,will sell in future f(ind+1,0,prices)
+         ans=max(ans,f(ind+1,1,prices));    //will buy in future -->f(ind+1,1,prices)
+        }
+        else{ //selling the stocks buyed before at maximum profit
+            ans=max(prices[ind],f(ind+1,0,prices)); //prices[ind] =>selling the stock at current index 
+            //f(ind+1,0,prices) => will sell stock in future 
+        }
+        return dp[ind][buy]=ans;
+    }
+    int maxProfit(vector<int>& prices) {
+        memset(dp,-1,sizeof(dp));
+        return f(0,1,prices);
+    }
+};
+
+
+
+
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        vector<int>prefix(prices.size(),0);
+        int ans=0;
+        prefix[0]=prices[0];
+        for(int i=1;i<prices.size();i++){
+            prefix[i]=min(prices[i],prefix[i-1]);
+        }
+         for(int i=1;i<prices.size();i++){
+           ans=max(ans,prices[i]-prefix[i]);
+        }
+        return ans;
+
+    }
+};

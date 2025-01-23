@@ -1,0 +1,24 @@
+class Solution {
+  public:
+    double findSmallestMaxDist(vector<int> &nums, int k) {
+        priority_queue<pair<double,int>>pq;
+        sort(nums.begin(),nums.end());
+        vector<int>store(nums.size()-1,0);
+        for(int i=0;i<nums.size()-1;i++){
+            double one=nums[i+1]-nums[i];
+            pq.push({one,i});
+        }
+        int count=0;
+        while(count<k){
+            pair<double, int> topElement = pq.top(); // Extract the top element
+            double a = topElement.first;
+            int b = topElement.second;
+            pq.pop();
+            count++;
+            store[b]++;
+            pq.push({(nums[b + 1] - nums[b]) * 1.0L / (store[b] + 1), b});
+        }
+        double result = pq.top().first;
+        return round(result * 100.0) / 100.0;
+    }
+};

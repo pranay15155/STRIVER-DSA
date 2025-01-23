@@ -1,0 +1,34 @@
+https://leetcode.com/problems/cherry-pickup-ii/description/
+
+
+class Solution {
+public:
+    int n, m;
+    int dp[75][75][75];
+    int f(int row, int col1, int col2, vector<vector<int>>& grid) {
+        if (row >= n || col1 < 0 || col2 < 0 || col1 >= m || col2 >= m) return 0;
+
+        if (row == n - 1) {
+            if (col1 == col2)
+                return grid[row][col1];
+            else
+                return grid[row][col1] + grid[row][col2];
+        }
+        if (dp[row][col1][col2] != -1) return dp[row][col1][col2];
+        int dc[3] = {-1, 0, +1};
+        int ans = 0;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                ans = max(ans, f(row + 1, col1 + dc[i], col2 + dc[j], grid));
+            }
+        }
+        if (col1 == col2)return dp[row][col1][col2] = ans + grid[row][col1];
+        return dp[row][col1][col2] = ans + grid[row][col1] + grid[row][col2];
+    }
+    int cherryPickup(vector<vector<int>>& grid) {
+        n = grid.size();
+        m = grid[0].size();
+        memset(dp, -1, sizeof(dp));
+        return f(0, 0, m - 1, grid);
+    }
+};

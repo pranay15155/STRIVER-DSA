@@ -1,0 +1,29 @@
+https://leetcode.com/problems/delete-operation-for-two-strings/description/
+
+class Solution {
+public:
+     int lcs(string text1, string text2) {
+        int n=text1.size(),m=text2.size();
+        vector<int>prev(m+1,0);
+        for(int ind1=n-1;ind1>=0;ind1--){
+            vector<int>curr(m+1,0);
+            for(int ind2=m-1;ind2>=0;ind2--){
+                if(ind1==n-1 && ind2==m-1){
+                    curr[ind2]=text1[ind1]==text2[ind2]?1:0;
+                    continue;
+                }
+                if(text1[ind1]==text2[ind2]){
+                    curr[ind2]=prev[ind2+1]+1;
+                    continue;
+                }
+                curr[ind2]=max(prev[ind2],curr[ind2+1]);         
+            }
+            prev=curr;
+        }
+        return prev[0];
+    }
+    int minDistance(string word1, string word2) {
+        int x=lcs(word1,word2);
+        return word1.size()+word2.size()-(2*x);
+    }
+};

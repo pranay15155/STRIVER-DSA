@@ -1,0 +1,181 @@
+https://www.geeksforgeeks.org/problems/geeks-training/1?utm_source=youtube&utm_medium=collab_striver_ytdescription&utm_campaign=geeks-training
+
+
+//MEMOIZATION
+
+class Solution {
+  public:
+    int dp[100005][4];
+    int f(int ind,int prev,vector<vector<int>>& arr,int n) {
+        if(ind==n-1){
+            int ans=0;
+            for(int i=0;i<arr[n-1].size();i++){
+                if(i!=prev)ans=max(ans,arr[n-1][i]);
+            }
+            return ans;
+        }
+        if(dp[ind][prev]!=-1)return dp[ind][prev];
+        int ans=0;
+        for(int i=0;i<arr[ind].size();i++){
+            if(i!=prev){
+                ans=max(ans,arr[ind][i]+f(ind+1,i,arr,n));
+            }
+        }
+        return dp[ind][prev]=ans;
+    }
+    int maximumPoints(vector<vector<int>>& arr, int n) {
+        memset(dp,-1,sizeof(dp));
+        return f(0,3,arr,n);
+    }
+};
+
+
+//
+
+
+
+void d(vector<int>&v){for(auto &t:v){cout<<t<<" ";}cout<<endl;}
+void d(vector<vector<int>>&v){for(auto &a:v){for(auto &b:a){cout<<b<<" ";}cout<<endl;}}
+void d(int arr[],int size){for(int i=0;i<size;i++){cout<<arr[i]<<" ";}cout<<endl;}
+void d(vector<vector<vector<int>>>&v){for(auto &a:v){for(auto &b:a){for(auto &c:b){cout<<c<<" ";}cout<<endl;}cout<<endl;}cout<<endl;}
+
+class Solution {
+  public:
+    int f(int ind,int prev,vector<vector<int>>& points,vector<vector<int>>& dp){
+        if(ind==0){
+            int maxi=0;
+            for(int i=0;i<3;i++){
+                if(i!=prev){
+                    maxi=max(maxi,points[0][i]);
+                }
+            }
+            return maxi;
+        }
+        if(dp[ind][prev]!=-1)return dp[ind][prev];
+        int ans=0;
+        for(int i=0;i<3;i++){
+                if(i!=prev){
+                    ans=max(ans,points[ind][i]+f(ind-1,i,points,dp));
+                    // cout<<ans<<endl;
+                }
+        }
+        return dp[ind][prev]=ans;
+    }
+    int maximumPoints(vector<vector<int>>& points, int n) {
+       vector<vector<int>>dp(n,vector<int>(4,-1));
+       int x=f(n-1,3,points,dp);
+    //   d(dp);
+       return x;
+
+    }
+};
+
+//METHOD --2 /////////////
+
+
+class Solution {
+  public:
+    long long f(int row,int col,vector<vector<int>>& points,vector<vector<int>>& dp){
+       if(row==0){
+           return points[row][col];
+       }
+       if(dp[row][col]!=-1)return dp[row][col];
+       long long temp=0;
+           for(int i=0;i<3;i++){
+               if(i!=col){
+                   temp=max(temp,f(row-1,i,points,dp));
+               }
+           }
+           temp+=points[row][col];
+           return dp[row][col]=temp;
+       
+    }
+    int maximumPoints(vector<vector<int>>& points, int n) {
+       vector<vector<int>>dp(n,vector<int>(3,-1));
+       long long x=0;
+       for(int col=0;col<3;col++){
+           x=max(x,f(n-1,col,points,dp));
+       }
+    //   d(dp);
+       return x;
+
+    }
+};
+
+
+//TABULATION ********************************************************************************
+
+class Solution
+{
+public:
+    int maximumPoints(vector<vector<int>> &points, int n)
+    {
+        vector<vector<int>> dp(n, vector<int>(3, -1));
+        dp[0][0] = points[0][0];
+        dp[0][1] = points[0][1];
+        dp[0][2] = points[0][2];
+        int final_ans = 0;
+        for (int day = 1; day < n; ++day)
+        {
+            for (int task = 0; task < 3; ++task)
+            {
+                int ans = 0;
+                for (int next = 0; next < 3; next++)
+                {
+                    if (task != next)
+                    {
+                        ans = max(ans, points[day][task] + dp[day - 1][next]);
+                    }
+                }
+                dp[day][task] = ans;
+                final_ans = max(final_ans, ans);
+            }
+        }
+        return final_ans;
+    }
+};
+
+
+//SPACE OPTIMIZATION **********************************************************************************
+
+void d(vector<int>&v){for(auto &t:v){cout<<t<<" ";}cout<<endl;}
+void d(vector<vector<int>>&v){for(auto &a:v){for(auto &b:a){cout<<b<<" ";}cout<<endl;}}
+void d(int arr[],int size){for(int i=0;i<size;i++){cout<<arr[i]<<" ";}cout<<endl;}
+void d(vector<vector<vector<int>>>&v){for(auto &a:v){for(auto &b:a){for(auto &c:b){cout<<c<<" ";}cout<<endl;}cout<<endl;}cout<<endl;}
+class Solution
+{
+public:
+    int maximumPoints(vector<vector<int>> &points, int n)
+    {
+        vector<int> previous(3, 0);
+
+        for (int i = 0; i < 3; ++i)
+        {
+            previous[i] = points[0][i];
+        }
+        // d(previous) 
+        int final_ans = 0;
+        for (int day = 1; day < n; ++day)
+        {
+            vector<int> current(3, 0);
+            for (int task = 0; task < 3; ++task)
+            {
+                int ans = 0;
+                for (int next = 0; next < 3; next++)
+                {
+                    if (task != next)
+                    {
+                        ans = max(ans, points[day][task] + previous[next]);
+                    }
+                }
+                current[task] = ans;
+                final_ans = max(final_ans, ans);
+            }
+            previous = current;
+            // d(previous);
+        }
+        // d(final_ans);
+        return final_ans;
+    }
+};
+

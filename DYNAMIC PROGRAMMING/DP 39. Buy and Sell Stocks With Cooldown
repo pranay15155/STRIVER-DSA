@@ -1,0 +1,81 @@
+https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/description/
+
+class Solution {
+public:
+int n;
+int dp[5005][2];
+int f(int ind,int buy,vector<int>& prices){
+    if(ind>=n)return 0;
+    if(dp[ind][buy]!=-1)return dp[ind][buy];
+    int ans=0;
+    if(buy){
+        ans=-prices[ind]+f(ind+1,0,prices);
+        ans=max(ans,f(ind+1,1,prices));
+    }
+    else{
+        ans=prices[ind]+f(ind+2,1,prices);
+        ans=max(ans,f(ind+1,0,prices));
+    }
+    return dp[ind][buy]=ans;
+}
+    int maxProfit(vector<int>& prices) {
+        n=prices.size();
+        memset(dp,-1,sizeof(dp));
+        return f(0,1,prices);
+    }
+};
+
+//cooldown period of 1 day
+//suppose we sell stock today  we can buy stock only on day after tommorow or later 
+
+
+
+
+
+
+
+
+
+//MEMOISATION 
+
+class Solution {
+public:
+int n;
+    int f(int ind,int buy,vector<int>& prices,vector<vector<int>>&dp){
+        if(ind>=n)return 0;
+        if(dp[ind][buy]!=-1)return dp[ind][buy];
+        int ans=0;
+        if(buy){
+            ans=max(-prices[ind]+f(ind+1,0,prices,dp),f(ind+1,1,prices,dp));
+        }
+        else ans=max(prices[ind]+f(ind+2,1,prices,dp),f(ind+1,0,prices,dp));
+        return dp[ind][buy]=ans;
+    }
+    int maxProfit(vector<int>& prices) {
+        n=prices.size();
+        vector<vector<int>>dp(n,vector<int>(2,-1));
+        return f(0,1,prices,dp);
+    }
+};
+
+//TABULATION 
+
+class Solution {
+public:
+int n;
+    int maxProfit(vector<int>& prices) {
+         n=prices.size();
+        vector<vector<int>>dp(n+2,vector<int>(2,0));
+        for(int ind=n-1;ind>=0;ind--){
+            for(int buy=0;buy<2;buy++){
+                if(buy){
+                    dp[ind][buy]=max(-prices[ind]+dp[ind+1][0],dp[ind+1][1]);
+                }
+                else dp[ind][buy]=max(prices[ind]+dp[ind+2][1],dp[ind+1][0]);
+            }
+        }
+        return dp[0][1];
+    }
+};
+
+

@@ -1,0 +1,59 @@
+//MEMOISATION 
+
+class Solution {
+public:
+int n;
+    int f(int ind,int prev,vector<int>& nums,vector<vector<int>>&dp){
+        if(ind>=n)return 0;
+        if(dp[ind][prev+1]!=-1)return dp[ind][prev+1];
+        if(prev==-1 || nums[ind]>nums[prev]){
+            return dp[ind][prev+1]=max(1+f(ind+1,ind,nums,dp),f(ind+1,prev,nums,dp));
+        }
+        return dp[ind][prev+1]=f(ind+1,prev,nums,dp);
+
+    }
+    int lengthOfLIS(vector<int>& nums) {
+        n=nums.size();
+        vector<vector<int>>dp(n,vector<int>(n,-1));
+        return f(0,-1,nums,dp);
+    }
+};
+
+//TABULATION 
+
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        int n = nums.size();
+        vector<vector<int>> dp(n+1,vector<int>(n+1));
+        for(int ind=n-1;ind>=0;ind--){
+            for(int prev=ind-1;prev>=-1;prev--){
+                if(prev==-1 || nums[ind]>nums[prev]){
+                    dp[ind][prev+1] = max(1+dp[ind+1][ind+1],dp[ind+1][prev+1]);
+                }else{
+                    dp[ind][prev+1] = dp[ind+1][prev+1];
+                }
+            }
+        }
+
+        return dp[0][0];
+    }
+};
+
+//METHOD--2 
+
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        int n=nums.size();
+        vector<int>dp(n,1);
+        for(int i=0;i<n;i++){
+            for(int j=0;j<i;j++){
+                if(nums[j]<nums[i])dp[i]=max(dp[i],1+dp[j]);
+            }
+        }
+        return *max_element(dp.begin(),dp.end());
+    }
+
+
+};

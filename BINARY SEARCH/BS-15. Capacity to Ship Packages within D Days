@@ -1,0 +1,32 @@
+class Solution {
+public:
+    int f(int load,vector<int>& weights, int days){
+        int ans=1;
+        int temp=load;
+        int i=0;
+        while(i<weights.size()){
+            if(temp>=weights[i]){
+                temp-=weights[i];
+                i++;
+            }
+            else{
+                temp=load;
+                ans++;
+            }
+        }
+        return ans<=days;
+    }
+    int shipWithinDays(vector<int>& weights, int days) {
+        int low=*max_element(weights.begin(),weights.end()),high=1e9;
+        int ans=0;
+        while(low<=high){
+            int mid=(low+high)/2;
+            if(f(mid,weights,days)){
+                ans=mid;
+                high=mid-1;
+            }
+            else low=mid+1;
+        }
+        return ans;
+    }
+};

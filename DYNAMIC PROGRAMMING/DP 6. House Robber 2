@@ -1,0 +1,102 @@
+https://leetcode.com/problems/house-robber-ii/description/
+
+
+//METHOD 1
+//in this code i have used 3d vector to store index, taken,zero
+//taken is to take adjacent element or not
+//zero is i have stored that at index 0 i have taken that element or not
+//if i have taken element at 0 index i will not take element at last index becuase it is a circular array and they will become adjacent
+
+class Solution {
+public:
+ int n;
+ int dp[102][2][2];
+    int f(int ind,int taken,int zero,vector<int>& nums){
+        if(ind==n-1){
+            if(taken==1 && zero==1)return nums[ind];
+            else return 0;
+        }
+        if(ind>=n)return 0;
+        if(dp[ind][taken][zero]!=-1)return dp[ind][taken][zero];
+        int take=0,not_take=0;
+        if(taken==1)take=nums[ind]+f(ind+1,0,zero,nums);
+        not_take=f(ind+1,1,zero,nums);
+        return dp[ind][taken][zero]=max(take,not_take);
+    }
+    int rob(vector<int>& nums) {
+        n=nums.size();
+        memset(dp,-1,sizeof(dp));
+        return max(nums[0]+f(1,0,0,nums),f(1,1,1,nums)); //here i am generating two cases that i am taking 0th index element and i am leaving 0 index element
+    }
+};
+//at line 29 
+//In 1st case if i am  taking 0 index element hence passed 0 in zero so that not take n-1 element 
+//than i will start from index 1 but 
+//will not take index 0 hence passed 0 in taken 
+
+//In 2nd case i am skipping 0th element and hence 
+//start from 1 and pass 1 in taken because 1 can be taken
+//and passed 1 in zero becuase 0th element is not taken hence n-1 element can be taken 
+
+
+
+
+//METHOD 2
+USING 2D VECTOR
+
+class Solution {
+public:
+ int n;
+ int dp[102][2];
+    int f(int ind,int zero,vector<int>& nums){
+        if(ind==n-1){
+            if(zero==1)return nums[ind];
+            else return 0;
+        }
+        if(ind>=n)return 0;
+        if(dp[ind][zero]!=-1)return dp[ind][zero];
+        int take=nums[ind]+f(ind+2,zero,nums);
+        int not_take=f(ind+1,zero,nums);
+        return dp[ind][zero]=max(take,not_take);
+    }
+
+    int rob(vector<int>& nums) {
+        n=nums.size();
+        memset(dp,-1,sizeof(dp));
+        return max(nums[0]+f(2,0,nums),f(1,1,nums));
+    }
+};
+
+
+//USING 1D DP
+
+
+class Solution {
+public:
+ int dp1[102];
+ int dp2[102];
+    int f1(int ind,vector<int>& nums){
+        if(ind>=nums.size())return 0;
+        if(dp1[ind]!=-1)return dp1[ind];
+        int take=nums[ind]+f1(ind+2,nums);
+        int not_take=f1(ind+1,nums);
+        return dp1[ind]=max(take,not_take);
+    }
+    int f2(int ind,vector<int>& nums){
+        if(ind>=nums.size())return 0;
+        if(dp2[ind]!=-1)return dp2[ind];
+        int take=nums[ind]+f2(ind+2,nums);
+        int not_take=f2(ind+1,nums);
+        return dp2[ind]=max(take,not_take);
+    }
+
+    int rob(vector<int>& nums) {
+        memset(dp1,-1,sizeof(dp1));
+        memset(dp2,-1,sizeof(dp2));
+        vector<int>nums2=nums;
+        nums2.pop_back();
+        return max(nums[0]+f1(2,nums2),f2(1,nums));
+    }
+};
+
+// [1,3,1,3,100]
