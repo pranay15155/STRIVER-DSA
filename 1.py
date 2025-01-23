@@ -26,4 +26,5 @@ if __name__ == "__main__":
 
 #how to run it
 #open cmd using windows +r then type cmd and enter
+#first change directory using cd your path 
 #then write python 1.py
