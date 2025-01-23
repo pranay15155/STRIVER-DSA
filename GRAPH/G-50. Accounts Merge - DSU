@@ -1,0 +1,67 @@
+https://leetcode.com/problems/accounts-merge/description/
+
+
+class Solution {
+public:
+ int find_parent(int node,vector<int>&parent){
+        if(node==parent[node])return node;
+        return parent[node]=find_parent(parent[node],parent);
+    }
+    void union_by_size(int u,int v,vector<int>&parent,vector<int>&size){
+        int pu=find_parent(u,parent);
+        int pv=find_parent(v,parent);
+
+        if(pu!=pv){
+            if(size[pu]>size[pv]){
+                parent[pv]=pu;
+                size[pu]+=size[pv];
+                
+            }
+            else if(size[pu]==size[pv]){
+                parent[pv]=pu;
+                size[pu]+=size[pv];
+            }
+            else{
+                parent[pu]=pv;
+                size[pv]+=size[pu];
+            }
+        }
+    }
+    vector<vector<string>> accountsMerge(vector<vector<string>>& accounts) {
+        int n=accounts.size();
+        vector<int>parent(n,0);
+        vector<int>size(n,1);
+        map<string,int>mp;
+        for(int i=0;i<n;i++){
+            for(int j=1;j<accounts[i].size();j++){
+                mp[accounts[i][j]]=i;
+            }
+            parent[i]=i;
+        }
+        for(int i=0;i<n;i++){
+            for(int j=1;j<accounts[i].size();j++){
+                int u=mp[accounts[i][j]];
+                int pu=find_parent(u,parent);
+                if(pu!=i){
+                  union_by_size(i,pu,parent,size);
+                }
+            }
+        }
+        vector<vector<string>>ans(n);
+
+        for(auto &[striing,index]:mp){
+            int indx=find_parent(index,parent);
+            if(ans[indx].size()==0)ans[indx].push_back(accounts[indx][0]);
+            ans[indx].push_back(striing);
+        }
+        //d(ans);
+        vector<vector<string>>answer;
+        for(int i=0;i<n;i++){
+            if(ans[i].size())answer.push_back(ans[i]);
+        }
+        //why am i copying it again because the one which is connected will have an empty array in ans
+        //try to print ans and yu will know in first testcase itself 
+        return answer;
+
+    }
+};

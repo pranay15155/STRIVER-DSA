@@ -1,0 +1,41 @@
+
+class Solution {
+public:
+    int n;
+    bool dfs(int node, vector<int>& vis, vector<int>& color,vector<vector<int>>& graph) {
+        vis[node] = 1;
+        for (int j = 0; j < graph[node].size(); j++) {
+            int adjacent = graph[node][j];
+            if (vis[adjacent] == 0) {
+                vis[adjacent] = 1;
+                if (color[node] == 1)
+                    color[adjacent] = 2;
+                else
+                    color[adjacent] = 1;
+                if (dfs(adjacent, vis, color, graph) == 0)
+                    return 0;
+            }
+            if (vis[adjacent] == 1 && color[node] == color[adjacent]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    bool isBipartite(vector<vector<int>>& graph) {
+        n = graph.size();
+        vector<int> color(n, -1), vis(n, 0);
+        for (int i = 0; i < n; i++) {
+            if (vis[i] == 0) {
+                color[i] = 1;
+                bool flag = dfs(i, vis, color, graph);
+                if (!flag)
+                    return 0;
+            }
+        }
+        return 1;
+        // remember linear graph with no cycle is always bipartite
+        // any graph with even cycle length is also bipartite
+        // only odd cycle are not bipartite
+    }
+};

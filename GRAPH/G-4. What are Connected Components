@@ -1,0 +1,89 @@
+//https://www.hackerearth.com/problem/algorithm/connected-components-in-a-graph/?purpose=login&source=problem-page&update=google
+
+//   USING BFS    -->
+
+#include<bits/stdc++.h>
+using namespace std;
+
+void bfs(int node,vector<int>&vis,vector<int>adj[]){
+   	queue<int>q;
+	q.push(node);
+	vis[node]=1;
+	while(q.size()){
+		int size=q.size();
+		for(int i=0;i<size;i++){
+			int element=q.front();
+			q.pop();
+			for(int j=0;j<adj[element].size();j++){
+				if(vis[adj[element][j]]==0){
+					q.push(adj[element][j]);
+                    vis[adj[element][j]]=1;
+				}
+			}
+		}
+	}
+
+}
+int main() {
+	int n,e;
+	cin>>n>>e;
+	vector<int>adj[n+1];
+	for(int i=0;i<e;i++){
+		int a,b;
+		cin>>a>>b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+
+	int ans=0;
+	vector<int>vis(n+1,0);
+    for(int i=1;i<=n;i++){
+		if(vis[i]==0){
+			bfs(i,vis,adj);
+			ans++;
+		}
+	}
+	cout<<ans<<endl;
+	return 0;
+}
+
+
+//USING DFS       -->
+
+
+#include<bits/stdc++.h>
+using namespace std;
+
+void dfs(int node,vector<int>&vis,vector<int>adj[]){
+    vis[node]=1;
+    for(int i=0;i<adj[node].size();i++){
+        int element=adj[node][i];
+        if(vis[element]==0){
+            dfs(element,vis,adj);
+        }
+    }
+}
+
+int main() {
+	int n,e;
+	cin>>n>>e;
+	vector<int>adj[n+1];
+	for(int i=0;i<e;i++){
+		int a,b;
+		cin>>a>>b;
+		adj[a].push_back(b);
+		adj[b].push_back(a);
+	}
+
+	int ans=0;
+	vector<int>vis(n+1,0);
+    for(int i=1;i<=n;i++){
+		if(vis[i]==0){
+			dfs(i,vis,adj);
+			ans++;
+		}
+	}
+	cout<<ans<<endl;
+	return 0;
+
+}

@@ -1,0 +1,49 @@
+https://www.geeksforgeeks.org/problems/shortest-path-in-weighted-undirected-graph/1
+
+class Solution {
+  public:
+
+   vector<int> shortestPath(int n, int m, vector<vector<int>>& edges) {
+        vector<int>ans;
+        priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>>pq;
+        vector<int>dist(n+1,1e8);
+        vector<int>parent(n+1,-1);
+        pq.push({0,1});
+        vector<vector<pair<int,int>>>adj(n+1);
+        for(int i=0;i<m;i++){
+            int a=edges[i][0];
+            int b=edges[i][1];
+            int dist=edges[i][2];
+            adj[a].push_back({b,dist});
+            adj[b].push_back({a,dist});
+        }
+        dist[1]=0;
+        parent[1]=1;
+        while(pq.size()){
+            auto x=pq.top();
+            int node=x.second;
+            int node_dist=x.first;
+            pq.pop();
+            for(auto &z:adj[node]){
+                int adj_node=z.first;
+                int edge_wt=z.second;
+                if(node_dist+edge_wt<dist[adj_node]){
+                    dist[adj_node]=node_dist+edge_wt;
+                    parent[adj_node]=node;
+                    pq.push({dist[adj_node],adj_node});
+                }
+            }
+        }
+        if(parent[n]==-1)return {-1}; // or if(dist[n]==1e8)return {-1};
+        int z=n;
+        while(parent[z]!=z){
+            ans.push_back(z);
+            z=parent[z];
+        }
+        ans.push_back(1);
+        ans.push_back(dist[n]);
+        reverse(ans.begin(),ans.end());
+        return ans;
+    }
+
+};

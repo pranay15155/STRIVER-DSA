@@ -1,0 +1,29 @@
+https://www.geeksforgeeks.org/problems/detect-cycle-in-a-directed-graph/1
+
+
+class Solution {
+  public:
+    bool dfs(int node,vector<vector<int>>& adj,vector<int>&vis,vector<int>&path_vis){
+        vis[node]=1;
+        path_vis[node]=1;
+        for(auto &x:adj[node]){
+            if(vis[x]==0){
+                if(dfs(x,adj,vis,path_vis))return true;
+            }
+            if(vis[x]==1 && path_vis[x]==1)return true;
+        }
+        path_vis[node]=0;
+        return 0;
+    }
+    bool isCyclic(int V, vector<vector<int>> adj) {
+        vector<int>vis(V,0),path_vis(V,0);
+        for(int i=0;i<V;i++){
+            if(vis[i]==0){
+                if(dfs(i,adj,vis,path_vis))return true;
+            }
+        }
+        return false;
+    }
+};
+
+

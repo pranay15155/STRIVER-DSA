@@ -1,0 +1,43 @@
+https://www.geeksforgeeks.org/problems/topological-sort/1
+
+
+//This Algorithm will not give proper topo sort algo for Directed Cyclic Graph hence works
+only for Directed Acyclic Graph
+
+//if used in directed cyclic graph it will give wrong ans
+
+
+class Solution {
+  public:
+    void dfs(int node,vector<vector<int>>& adj,stack<int>&st,vector<int>&vis){
+        vis[node]=1;
+        for(auto &x:adj[node]){
+            if(vis[x]==0){
+                dfs(x,adj,st,vis);
+            }
+        }
+        st.push(node);
+        
+    }
+    vector<int> topologicalSort(vector<vector<int>>& adj) {
+        int n=adj.size();
+        stack<int>st;
+        vector<int>vis(n,0);
+        for(int i=0;i<n;i++){
+            if(vis[i]==0){
+            dfs(i,adj,st,vis);
+            }
+        }
+        vector<int>ans;
+        while(st.size()){
+            ans.push_back(st.top());
+            st.pop();
+        }
+        return ans;
+    
+        
+    }
+    
+};
+
+

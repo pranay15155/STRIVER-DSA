@@ -1,0 +1,54 @@
+https://leetcode.com/problems/rotting-oranges/
+
+class Solution {
+public:
+int n,m;
+    bool check(int row,int col){
+        if(row>=n || row<0 || col>=m || col<0)return 0;
+        return 1;
+    }
+
+    int orangesRotting(vector<vector<int>>& grid) {
+        n=grid.size();
+        m=grid[0].size();
+        queue<pair<int,int>>q;
+        vector<vector<int>>vis(n,vector<int>(m,0));
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(grid[i][j]==2){
+                    q.push({i,j});
+                    vis[i][j]=1;
+                }
+            }
+        }
+        int dr[4]={-1,0,1,0};
+        int dc[4]={0,1,0,-1};
+        int ans=0;
+        while(q.size()){
+            int size=q.size();
+            ans++;
+            for(int i=0;i<size;i++){
+                auto [r,c]=q.front();
+                q.pop();
+                for(int j=0;j<4;j++){
+                int nr=r+dr[j];
+                int nc=c+dc[j];
+                if(check(nr,nc) && vis[nr][nc]==0 && grid[nr][nc]==1){
+                    q.push({nr,nc});
+                    vis[nr][nc]=1;
+                    grid[nr][nc]=2;
+                }
+                }
+            }
+        }
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(grid[i][j]==1){
+                    return -1;
+                }
+            }
+        }
+        return ans>0?ans-1:0; 
+        //edge case when [[0]] ans-1 becomes -1 
+    }
+};

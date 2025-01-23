@@ -1,0 +1,59 @@
+https://www.geeksforgeeks.org/problems/word-ladder-ii/1
+
+//this code will not work on leetcode 
+//leetcode has an optimised version 
+
+
+class Solution {
+public:
+
+vector<string> f(string &s,unordered_map<string,int>&mp){
+        vector<string>ans;
+        for(int i=0;i<s.size();i++){
+            for(int j=0;j<26;j++){
+                string new_temp=s;
+                char x=char('a'+j);
+                new_temp[i]=x;
+                if(new_temp!=s && mp.find(new_temp)!=mp.end()){
+                    ans.push_back(new_temp);
+                }
+            }
+        }
+        return ans;
+    }
+
+    vector<vector<string>> findSequences(string beginWord, string endWord, vector<string>& wordList) {
+        unordered_map<string,int>mp,vis;
+        for(int i=0;i<wordList.size();i++){
+            mp[wordList[i]]++;
+        }
+        queue<vector<string>>q;
+        q.push({beginWord});
+        vector<vector<string>> ans;
+        vector<string>used;//this vector stores words used on a level which should not be used later on
+        vis[beginWord]++;
+        while(q.size()){
+            int size=q.size();
+            for(int i=0;i<used.size();i++){
+                vis[used[i]]++;
+            }
+            for(int i=0;i<size;i++){
+                auto x=q.front();
+                q.pop();
+                vector<string>temp=f(x.back(),mp);
+                // d(temp);
+                for(auto &z:temp){
+                    if(vis.find(z)==vis.end()){
+                        x.push_back(z);
+                        q.push(x);
+                        if(z==endWord)ans.push_back(x);
+                        used.push_back(z);
+                        x.pop_back();
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+};
+

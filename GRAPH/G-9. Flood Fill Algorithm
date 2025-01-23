@@ -1,0 +1,80 @@
+https://leetcode.com/problems/flood-fill/
+
+//BFS
+
+class Solution {
+public:
+   int n,m;
+    bool check(int row,int col){
+        if(row>=n || row<0 || col>=m || col<0)return 0;
+        return 1;
+    }
+    void bfs(int row,int col,vector<vector<int>>& ans,vector<vector<int>>& image,vector<vector<int>>& vis,int color){
+        queue<pair<int,int>>q;
+        q.push({row,col});
+        vis[row][col]=1;
+        int dr[4]={-1,0,1,0};
+        int dc[4]={0,1,0,-1};
+        while(q.size()){
+            int size=q.size();
+            for(int i=0;i<size;i++){
+                auto [r,c]=q.front();
+                ans[r][c]=color;
+                q.pop();
+                for(int j=0;j<4;j++){
+                int nr=r+dr[j];
+                int nc=c+dc[j];
+                if(check(nr,nc) && vis[nr][nc]==0 && image[r][c]==image[nr][nc]){
+                    q.push({nr,nc});
+                    vis[nr][nc]=1;
+                    ans[nr][nc]=color;
+                }
+                }
+            }
+        }
+    }
+    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int color) {
+        n=image.size();
+        m=image[0].size();
+        vector<vector<int>>ans=image;
+        vector<vector<int>>vis(n,vector<int>(m,0));
+        bfs(sr,sc,ans,image,vis,color);
+        return ans;
+    }
+};
+
+//DFS
+
+class Solution {
+public:
+    int n, m;
+    bool check(int row, int col) {
+        if (row >= n || row < 0 || col >= m || col < 0)
+            return 0;
+        return 1;
+    }
+    void dfs(int row, int col, vector<vector<int>>& ans,vector<vector<int>>& image, vector<vector<int>>& vis, int color) {
+        vis[row][col] = 1;
+        int dr[4] = {-1, 0, 1, 0};
+        int dc[4] = {0, 1, 0, -1};
+        ans[row][col] = color;
+        for (int j = 0; j < 4; j++) {
+            int nr = row + dr[j];
+            int nc = col + dc[j];
+            if (check(nr, nc) && vis[nr][nc] == 0 &&
+                image[row][col] == image[nr][nc]) {
+                vis[nr][nc] = 1;
+                ans[nr][nc] = color;
+                dfs(nr, nc, ans, image, vis, color);
+            }
+        }
+    }
+    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc,int color) {
+        n = image.size();
+        m = image[0].size();
+        vector<vector<int>> ans = image;
+        vector<vector<int>> vis(n, vector<int>(m, 0));
+        dfs(sr, sc, ans, image, vis, color);
+        return ans;
+    }
+};

@@ -1,0 +1,47 @@
+https://www.geeksforgeeks.org/problems/topological-sort/1
+
+In this algorithm first we will calculate indegree of all the nodes using adjacency vector 
+Then we will push those nodes with indegree 0 in the queue 
+They are put first because they are the only ones which are not required to come after a certain node and they could be placed 
+First in the ans vector
+
+Now we will traverse each element and remove the edges 
+For example  1->2 , 1->3
+Then we will remove the edge between 1 and 2 and decrease the indegree of 2 by 1 unit
+Simillarly for 3 
+If indegree of 2 or 3 becomes 0 then they are put in queue 
+
+This approach can not be explained further using grapg diagram if still not getting the approach watch striver video 
+
+class Solution {
+  public:
+    vector<int> topologicalSort(vector<vector<int>>& adj) {
+        int n=adj.size();
+       vector<int>indegree(n,0);
+       for(int i=0;i<n;i++){
+           for(int j=0;j<adj[i].size();j++){
+               indegree[adj[i][j]]++;
+           }
+       }
+       queue<int>q;
+       for(int i=0;i<n;i++){
+           if(indegree[i]==0)q.push(i);
+       }
+       vector<int>ans;
+       while(q.size()){
+           int size=q.size();
+           for(int i=0;i<size;i++){
+               int element=q.front();
+               q.pop();
+               ans.push_back(element);
+               for(auto &t:adj[element]){
+                   indegree[t]--;
+                   if(indegree[t]==0)q.push(t);
+               }
+           }
+           
+       }
+       return ans;
+    }
+};
+

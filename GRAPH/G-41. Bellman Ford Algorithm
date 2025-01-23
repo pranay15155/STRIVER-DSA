@@ -1,0 +1,42 @@
+https://www.geeksforgeeks.org/problems/distance-from-the-source-bellman-ford-algorithm/1
+
+
+class Solution {
+  public:
+
+    vector<int> bellmanFord(int V, vector<vector<int>>& edges, int src) {
+        // Code here
+        vector<int>dist(V,1e8);
+        dist[src]=0;
+        for(int i=1;i<=V-1;i++){
+           for(auto it:edges){
+               int node=it[0];
+               int adjnode=it[1];
+               int wt=it[2];
+               if(dist[node]!=1e8 && dist[node]+wt<dist[adjnode]){
+                   dist[adjnode]=dist[node]+wt;
+               }
+           }
+        }
+        for(auto it:edges){
+               int node=it[0];
+               int adjnode=it[1];
+               int wt=it[2];
+               if(dist[node]!=1e8 && dist[node]+wt<dist[adjnode]){
+                     return {-1};
+               }
+           }
+           
+           return dist;
+    }
+};
+
+
+on this testcase a negative cycle do exist 
+8 4
+1 0 -4
+3 5 -4
+4 3 -5
+5 3 -10
+1
+the meaning of this line dist[node]!=1e8 can be understood using this testcase

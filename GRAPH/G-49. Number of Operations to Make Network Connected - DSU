@@ -1,0 +1,60 @@
+https://leetcode.com/problems/number-of-operations-to-make-network-connected/
+
+
+class Solution {
+public:
+    int find_parent(int node,vector<int>&parent){
+        if(node==parent[node])return node;
+        return parent[node]=find_parent(parent[node],parent);
+    }
+    void union_by_size(int u,int v,vector<int>&parent,vector<int>&size){
+        int pu=find_parent(u,parent);
+        int pv=find_parent(v,parent);
+
+        if(pu!=pv){
+            if(size[pu]>size[pv]){
+                parent[pv]=pu;
+                size[pu]+=size[pv];
+                
+            }
+            else if(size[pu]==size[pv]){
+                parent[pv]=pu;
+                size[pu]+=size[pv];
+            }
+            else{
+                parent[pu]=pv;
+                size[pv]+=size[pu];
+            }
+            find_parent(u,parent);
+            find_parent(v,parent);
+        }
+    }
+    int makeConnected(int n, vector<vector<int>>& connections) {
+        vector<int>size(n,1);
+        vector<int>parent(n,0);
+        for(int i=0;i<n;i++){
+            parent[i]=i;
+        }
+        int extra=0;
+        for(int i=0;i<connections.size();i++){
+            int u=connections[i][0];
+            int v=connections[i][1];
+
+            int pu=find_parent(u,parent);
+            int pv=find_parent(v,parent);
+            if(pu==pv)extra++;  //gives us how many edges can be used to connect two different components
+            else{
+                union_by_size(u,v,parent,size);
+            }
+        }
+        int required=0;
+        for(int i=0;i<n;i++){
+            if(parent[i]==i )required++;//it gives us the no of components
+        }
+        // d(parent);
+        //remember one thing if there are n different components 
+        //then we require n-1  edges atleast  to connect all of them 
+        return extra<required-1?-1:required-1;
+
+    }
+};

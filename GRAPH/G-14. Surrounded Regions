@@ -1,0 +1,159 @@
+https://leetcode.com/problems/surrounded-regions/description/
+
+//BFS
+
+class Solution {
+public:
+    void solve(vector<vector<char>>& grid) {
+        queue<pair<int,int>>q;
+        int n=grid.size(),m=grid[0].size();
+        vector<vector<int>>vis(n,vector<int>(m,0));
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(grid[i][j]=='O' && (i==0 || i==n-1 || j==0 || j==m-1)){
+                    vis[i][j]=1;
+                    q.push({i,j});
+                }
+            }
+        }
+        while(q.size()){
+            int size=q.size();
+            for(int i=0;i<size;i++){
+                int row=q.front().first;
+                int col=q.front().second;
+                q.pop();
+                int nrow[4]={-1,0,1,0};
+                int ncol[4]={0,1,0,-1};
+                for(int j=0;j<4;j++){
+                    int new_row=row+nrow[j];
+                    int new_col=col+ncol[j];
+                    if(new_row<0 || new_col<0 ||new_row>=n || new_col>=m)continue;
+                    if(grid[new_row][new_col]=='X' || vis[new_row][new_col]==1)continue;
+                    if(grid[new_row][new_col]=='O' && vis[new_row][new_col]==0){
+                         vis[new_row][new_col]=1;
+                         q.push({new_row,new_col});
+                    }
+                }
+            }
+        }
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(grid[i][j]=='O' && vis[i][j]==0){
+                   grid[i][j]='X';
+                }
+            }
+        }
+        return ;
+    }
+};
+
+
+
+
+//DFS
+
+
+
+class Solution {
+public:
+    int n, m;
+    void dfs(int row, int col, vector<vector<char>>& grid,vector<vector<int>>& vis) {
+        int nrow[4] = {-1, 0, 1, 0};
+        int ncol[4] = {0, 1, 0, -1};
+        for (int j = 0; j < 4; j++) {
+            int new_row = row + nrow[j];
+            int new_col = col + ncol[j];
+            if (new_row < 0 || new_col < 0 || new_row >= n || new_col >= m)
+                continue;
+            if (grid[new_row][new_col] == 'X' || vis[new_row][new_col] == 1)
+                continue;
+            if (grid[new_row][new_col] == 'O' && vis[new_row][new_col] == 0) {
+                vis[new_row][new_col] = 1;
+                dfs(new_row, new_col, grid, vis);
+            }
+        }
+    }
+    void solve(vector<vector<char>>& grid) {
+        n = grid.size(), m = grid[0].size();
+        vector<vector<int>> vis(n, vector<int>(m, 0));
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i][j] == 'O' && (i == 0 || i == n - 1 || j == 0 || j == m - 1)) {
+                    vis[i][j] = 1;
+                    dfs(i, j, grid, vis);
+                }
+            }
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (grid[i][j] == 'O' && vis[i][j] == 0) {
+                    grid[i][j] = 'X';
+                }
+            }
+        }
+        return;
+    }
+};
+
+
+//METHOD 2
+IN THIS THOSE WHICH ARE NOT CONVERTIBLE ARE MARKED AS P AND REST ALL AS X 
+AND FINAL 2 FOR LOOP MARK ALL P TO BE O 
+class Solution {
+public:
+int n, m;
+    bool check(int row, int col) {
+        if (row < 0 || row >= n || col < 0 || col >= m)
+            return 0;
+        return 1;
+    }
+    void bfs(int row,int col, vector<vector<int>>&vis,vector<vector<char>>& board){
+        queue<pair<int,int>>q;
+        vis[row][col]=1;
+        q.push({row,col});
+        int dr[4] = {-1, 0, 1, 0};
+        int dc[4] = {0, 1, 0, -1};
+        board[row][col]='P';
+        while(q.size()){
+            int size=q.size();
+            for(int i=0;i<size;i++){
+                auto [x,y]=q.front();
+                q.pop();
+                for (int j = 0; j < 4; j++) {
+                    int nr = x + dr[j];
+                    int nc = y + dc[j];
+                    if(check(nr,nc) && vis[nr][nc]==0 && board[nr][nc]=='O'){
+                        vis[nr][nc]=1;
+                        q.push({nr,nc});
+                        board[nr][nc]='P';
+                    }
+                }
+            }
+        }
+
+    }
+    void solve(vector<vector<char>>& board) {
+        n = board.size();
+        m = board[0].size();
+        vector<vector<int>> vis(n, vector<int>(m, 0));
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(i==0 || i==n-1 || j==0 ||j==m-1){
+                    if(board[i][j]=='O'){
+                        bfs(i,j,vis,board);
+                    }
+                }
+            }
+        }
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(board[i][j]=='P'){
+                    board[i][j]='O';
+                }
+                else board[i][j]='X';
+            }
+        }
+        
+    }
+};

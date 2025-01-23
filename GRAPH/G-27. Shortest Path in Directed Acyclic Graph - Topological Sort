@@ -1,0 +1,116 @@
+https://www.geeksforgeeks.org/problems/shortest-path-in-undirected-graph/1?utm_source=youtube&utm_medium=collab_striver_ytdescription&utm_campaign=shortest-path-in-undirected-graph
+
+//CALCULATING TOPOSORT USING BFS 
+
+//THIS METHOD OF CALCULATION OF SHORTEST DISTANCE IS VALID FOR ONLY DIRECTED ACYCLIC GRAPH
+
+class Solution {
+  public:
+    vector<int>toposort(int n,vector<vector<pair<int,int>>>&adj){
+        vector<int>indegree(n,0);
+        for(int i=0;i<adj.size();i++){
+            for(int j=0;j<adj[i].size();j++){
+                indegree[adj[i][j].first]++;
+            }
+        }
+        vector<int>ans;
+        queue<int>q;
+        for(int i=0;i<n;i++){
+            if(indegree[i]==0)q.push(i);
+        }
+        while(q.size()){
+            int size=q.size();
+            for(int i=0;i<size;i++){
+                int element=q.front();
+                q.pop();
+                ans.push_back(element);
+                for(auto &x:adj[element]){
+                    indegree[x.first]--;
+                    if(indegree[x.first]==0)q.push(x.first);
+                }
+            }
+        }
+        return ans;
+    }
+    vector<int> shortestPath(int V, int E, vector<vector<int>>& edges) {
+        vector<int>dist(V,1e8);
+        vector<vector<pair<int,int>>>adj(V);
+        for(int i=0;i<edges.size();i++){
+            int a=edges[i][0];
+            int b=edges[i][1];
+            int c=edges[i][2];
+            adj[a].push_back({b,c});
+        }
+        vector<int>ans=toposort(V,adj);
+        // d(ans);
+        dist[0]=0;
+        for(int i=0;i<ans.size();i++){
+            int element=ans[i];
+            for(auto &x:adj[element]){
+                dist[x.first]=min(dist[x.first],dist[element]+x.second);
+            }
+        }
+        for(int i=0;i<V;i++){
+            if(dist[i]==1e8)dist[i]=-1;
+        }
+        return dist;
+        
+        
+    }
+};
+
+
+
+//CALCULATING TOPOSORT USING DFS
+
+class Solution {
+  public:
+    
+    void dfs(int node,vector<int>&vis,stack<int>&st, vector<vector<pair<int,int>>>&adj){
+        vis[node]=1;
+        for(auto &x:adj[node]){
+            if(vis[x.first]==0){
+                dfs(x.first,vis,st,adj);
+            }
+        }
+        st.push(node);
+        
+    }
+    vector<int> shortestPath(int V, int E, vector<vector<int>>& edges) {
+        vector<int>dist(V,1e8);
+        vector<vector<pair<int,int>>>adj(V);
+        for(int i=0;i<edges.size();i++){
+            int a=edges[i][0];
+            int b=edges[i][1];
+            int c=edges[i][2];
+            adj[a].push_back({b,c});
+        }
+        stack<int>st;
+        vector<int>vis(V,0);
+        vector<int>ans;
+        for(int i=0;i<V;i++){
+            if(vis[i]==0){
+                dfs(i,vis,st,adj);
+            }
+        }
+        while(st.size()){
+            ans.push_back(st.top());
+            st.pop();
+        }
+        dist[0]=0;
+        for(int i=0;i<ans.size();i++){
+            int element=ans[i];
+            for(auto &x:adj[element]){
+                dist[x.first]=min(dist[x.first],dist[element]+x.second);
+            }
+        }
+        for(int i=0;i<V;i++){
+            if(dist[i]==1e8)dist[i]=-1;
+        }
+        return dist;
+        
+        
+    }
+};
+
+

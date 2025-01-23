@@ -1,0 +1,47 @@
+https://leetcode.com/problems/find-eventual-safe-states/description/
+
+
+class Solution {
+public:
+int n;
+     vector<int> topologicalSort(vector<vector<int>>& adj) {
+        int n=adj.size();
+       vector<int>indegree(n,0);
+       for(int i=0;i<n;i++){
+           for(int j=0;j<adj[i].size();j++){
+               indegree[adj[i][j]]++;
+           }
+       }
+       queue<int>q;
+       for(int i=0;i<n;i++){
+           if(indegree[i]==0)q.push(i);
+       }
+       vector<int>ans;
+       while(q.size()){
+           int size=q.size();
+           for(int i=0;i<size;i++){
+               int element=q.front();
+               q.pop();
+               ans.push_back(element);
+               for(auto &t:adj[element]){
+                   indegree[t]--;
+                   if(indegree[t]==0)q.push(t);
+               }
+           }
+           
+       }
+       return ans;
+    }    
+    vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
+        n=graph.size();
+        vector<vector<int>>adj(n);
+        for(int i=0;i<n;i++){
+            for(int j=0;j<graph[i].size();j++){
+                adj[graph[i][j]].push_back(i);
+            }
+        }
+        vector<int>ans=topologicalSort(adj);
+        sort(ans.begin(),ans.end());
+        return ans;
+    }
+};

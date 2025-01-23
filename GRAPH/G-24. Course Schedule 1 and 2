@@ -1,0 +1,93 @@
+https://leetcode.com/problems/course-schedule/description/
+
+https://leetcode.com/problems/course-schedule-ii/description/
+
+
+class Solution {
+public:
+    bool isCyclic(vector<vector<int>>& adj) {
+       int n=adj.size();
+       vector<int>indegree(n,0);
+       for(int i=0;i<n;i++){
+           for(int j=0;j<adj[i].size();j++){
+               indegree[adj[i][j]]++;
+           }
+       }
+       queue<int>q;
+       for(int i=0;i<n;i++){
+           if(indegree[i]==0)q.push(i);
+       }
+       vector<int>ans;
+       while(q.size()){
+           int size=q.size();
+           for(int i=0;i<size;i++){
+               int element=q.front();
+               q.pop();
+               ans.push_back(element);
+               for(auto &t:adj[element]){
+                   indegree[t]--;
+                   if(indegree[t]==0)q.push(t);
+               }
+           }
+           
+       }
+       return ans.size()==n?1:0;//cycle is not present hence topo sort does exist
+    }
+    bool canFinish(int numCourses, vector<vector<int>>& graph) {
+        int n=graph.size();
+        vector<vector<int>>adj(numCourses);
+        for(int i=0;i<n;i++){
+          int one=graph[i][0];
+          int two=graph[i][1];
+          adj[two].push_back(one);
+        }
+        return isCyclic(adj);
+
+    }
+};
+
+
+
+class Solution {
+public:
+
+    vector<int> isCyclic(vector<vector<int>>& adj) {
+       int n=adj.size();
+       vector<int>indegree(n,0);
+       for(int i=0;i<n;i++){
+           for(int j=0;j<adj[i].size();j++){
+               indegree[adj[i][j]]++;
+           }
+       }
+       queue<int>q;
+       for(int i=0;i<n;i++){
+           if(indegree[i]==0)q.push(i);
+       }
+       vector<int>ans;
+       while(q.size()){
+           int size=q.size();
+           for(int i=0;i<size;i++){
+               int element=q.front();
+               q.pop();
+               ans.push_back(element);
+               for(auto &t:adj[element]){
+                   indegree[t]--;
+                   if(indegree[t]==0)q.push(t);
+               }
+           }
+           
+       }
+       return ans;
+    }
+    vector<int> findOrder(int numCourses, vector<vector<int>>& graph) {
+        int n=graph.size();
+        vector<vector<int>>adj(numCourses);
+        for(int i=0;i<n;i++){
+          int one=graph[i][0];
+          int two=graph[i][1];
+          adj[two].push_back(one);
+        }
+        vector<int>ans=isCyclic(adj);
+        return ans.size()==numCourses?ans:vector<int>();
+    }
+};

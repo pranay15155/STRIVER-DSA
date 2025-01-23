@@ -1,0 +1,54 @@
+https://www.geeksforgeeks.org/problems/minimum-spanning-tree/1
+
+//ans store the minimum spanning tree 
+
+class Solution {
+  public:
+    int spanningTree(int V, vector<vector<int>> adj[]) {
+      priority_queue<pair<int,pair<int,int>>,vector<pair<int,pair<int,int>>>,greater<pair<int,pair<int,int>>>>pq;
+      
+      vector<int>vis(V,0);
+      pq.push({0,{0,-1}});   //weight,node,parent
+      int sum=0;
+      vector<pair<pair<int,int>,int>>ans;        //node,adj_node,weight
+      while(pq.size()){
+          auto t=pq.top();
+          int weight=t.first;
+          int node=t.second.first;
+          int parent=t.second.second;
+          pq.pop();
+          if(vis[node]==0){
+            vis[node]=1;
+            sum=sum+weight;
+            if(parent!=-1)ans.push_back({{node,parent},weight});
+            for(auto &x:adj[node]){
+              int adjacent_node=x[0];
+              int edge_wt=x[1];
+              if(vis[adjacent_node]==0){
+                  pq.push({edge_wt,{adjacent_node,node}});
+              }
+            }  
+          }  
+      }
+    //   d(ans);
+      return sum;
+      }
+};
+
+
+//note here in gfg it has taken vector<vector<int>>adj[V]
+//where V is no of vertices
+//suppose for example 
+3 3
+0 1 5
+1 2 3
+0 2 7
+
+adj will look like this
+adj[0]->[[1,5],[2,7]] -->adj[0] will be a vector<vector<int>> having 2 vector<int> that is [1,5] and [2,7] where 5 and 7 are edge weight and 1 and 2 are nodes 
+from which 1 is connected
+adj[1]->[[2,3]]
+adj[2]->[[1,3],[0,7]]
+
+
+

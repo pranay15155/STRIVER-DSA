@@ -1,0 +1,95 @@
+https://leetcode.com/problems/making-a-large-island/description/
+
+
+class Solution {
+public:
+    int find_parent(int node,vector<int>&parent){
+        if(parent[node]==node)return node;
+        return parent[node]=find_parent(parent[node],parent);
+    }
+    void union_by_size(int u,int v,vector<int>&parent,vector<int>&size){
+        int pu=find_parent(u,parent);
+        int pv=find_parent(v,parent);
+        if(pu!=pv){
+           if(size[pu]>=size[pv]){
+            parent[pv]=pu;
+            size[pu]+=size[pv];
+           }
+           else{
+            parent[pu]=pv;
+            size[pv]+=size[pu];
+           }
+        }
+    }
+    int check(int row,int col,int n,int m){
+        if(row>=n || row<0 || col>=m || col<0)return 0;
+        return 1;
+    }
+    int largestIsland(vector<vector<int>>& grid) {
+        int n=grid.size();
+        int m=grid[0].size();
+        vector<int>size(n*m,1);
+        vector<int>parent(n*m);
+        iota(parent.begin(),parent.end(),0);
+         int dr[4] = {-1, 0, 1, 0};
+         int dc[4] = {0, 1, 0, -1};
+
+         int ans=1;
+         for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(grid[i][j]==1){
+                    for(int k=0;k<4;k++){
+                       int nrow=i+dr[k];
+                       int ncol=j+dc[k];
+                       if(check(nrow,ncol,n,m) && grid[nrow][ncol]==1){
+                        int number=i*m+j;
+                        int adj_number=nrow*m+ncol;
+                        union_by_size(number,adj_number,parent,size);
+                       }
+                    }
+                }
+            }
+         }
+         for(int i=0;i<n*m;i++){
+            ans=max(ans,size[i]);
+         }
+        //  d(size);
+        //  d(parent);
+         for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(grid[i][j]==0){
+                    int count=1;
+                    map<int,int>mp;//to store new ultimate parents
+                    for(int k=0;k<4;k++){
+                       int nrow=i+dr[k];
+                       int ncol=j+dc[k];
+                       if(check(nrow,ncol,n,m) && grid[nrow][ncol]==1){
+                        int number=i*m+j;
+                        int adj_number=nrow*m+ncol;
+                        int pu=find_parent(number,parent);
+                        int pv=find_parent(adj_number,parent);
+                        if(pu!=pv){
+                            if(mp.find(pv)==mp.end()){
+                                count+=size[pv];
+                                mp[pv]++;  //explained
+                            }
+                        }
+                       }
+                    }
+                    ans=max(ans,count);
+                }
+            }
+         }
+         
+         return ans;
+    }
+};
+
+
+//suppose this example [[1,1],[1,0]]
+//here when we reach i=1,j=1 we encounter 0
+//but here i=1,j=0 and i=0 ,j=1 both are adjacent to i=1,j=1 and
+// both i=1,j=0 and i=0 ,j=1 have same parent i.e i=0,j=0
+// but still both ultimate parent size i.e 3 is added two time if map 
+//is not used making count=1+3+3 which is wrong
+//so i made a map to store if this ultimate parent is visited  before it will not be added twice

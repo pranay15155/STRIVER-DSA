@@ -1,0 +1,128 @@
+https://leetcode.com/problems/shortest-path-in-binary-matrix/description/
+
+class Solution {
+public:
+    int n,m;
+    bool check(int &row, int &col) {
+        if (row < 0 || row >= n || col < 0 || col >= m)
+            return 0;
+        return 1;
+    }
+    int shortestPathBinaryMatrix(vector<vector<int>>& grid) {
+        int dr[8]={-1,-1,0,1,1,1,0,-1};
+        int dc[8]={0,1,1,1,0,-1,-1,-1};
+        n=grid.size();
+        m=grid[0].size();
+        vector<vector<int>>dist(n,vector<int>(m,1e8));
+        queue<pair<int,pair<int,int>>>q;
+        if(grid[0][0]==0){
+            q.push({1,{0,0}});
+            dist[0][0]=1;
+        }
+        while(q.size()){
+         auto x=q.front();
+         q.pop();
+         int distance=x.first;
+         int row=x.second.first;
+         int col=x.second.second;
+        //  d3(row,col,distance);
+         for(int i=0;i<8;i++){
+            int nr=row+dr[i];
+            int nc=col+dc[i];
+            if(check(nr,nc) && dist[nr][nc]>distance+1 && grid[nr][nc]==0){
+                dist[nr][nc]=distance+1;
+                q.push({dist[nr][nc],{nr,nc}});
+            }
+         }
+        }
+        return dist[n-1][m-1]==1e8?-1:dist[n-1][m-1];
+    }
+};
+
+//in this 2nd code i have obtained distance of every cell using dist vector of vector instead of pushing distance in queue to save space  
+
+class Solution {
+public:
+    int n,m;
+    bool check(int &row, int &col) {
+        if (row < 0 || row >= n || col < 0 || col >= m)
+            return 0;
+        return 1;
+    }
+    int shortestPathBinaryMatrix(vector<vector<int>>& grid) {
+        int dr[8]={-1,-1,0,1,1,1,0,-1};
+        int dc[8]={0,1,1,1,0,-1,-1,-1};
+        n=grid.size();
+        m=grid[0].size();
+        vector<vector<int>>dist(n,vector<int>(m,1e8));
+        queue<pair<int,int>>q;
+        if(grid[0][0]==0){
+            q.push({0,0});
+            dist[0][0]=1;
+        }
+        while(q.size()){
+         auto x=q.front();
+         q.pop();
+         int row=x.first;
+         int col=x.second;
+         int distance=dist[row][col];
+        //  d3(row,col,distance);
+         for(int i=0;i<8;i++){
+            int nr=row+dr[i];
+            int nc=col+dc[i];
+            if(check(nr,nc) && dist[nr][nc]>distance+1 && grid[nr][nc]==0){
+                dist[nr][nc]=distance+1;
+                q.push({nr,nc});
+            }
+         }
+        }
+        return dist[n-1][m-1]==1e8?-1:dist[n-1][m-1];
+    }
+};
+
+
+//same question on gfg just here source and destination will be changed 
+
+
+https://www.geeksforgeeks.org/problems/shortest-path-in-a-binary-maze-1655453161/1?utm_source=youtube&utm_medium=collab_striver_ytdescription&utm_campaign=shortest-path-in-a-binary-maze
+
+
+class Solution {
+  public:
+  int n,m;
+    bool check(int &row, int &col) {
+        if (row < 0 || row >= n || col < 0 || col >= m)
+            return 0;
+        return 1;
+    }
+    int shortestPath(vector<vector<int>> &grid, pair<int, int> source,pair<int, int> destination) {
+        int dr[4] = {-1, 0, 1, 0};
+        int dc[4] = {0, 1, 0, -1};
+        n=grid.size();
+        m=grid[0].size();
+        vector<vector<int>>dist(n,vector<int>(m,1e8));
+        queue<pair<int,pair<int,int>>>q;
+        if(grid[source.first][source.second]==1){
+            q.push({0,{source.first,source.second}});
+            dist[source.first][source.second]=0;
+        }
+        while(q.size()){
+         auto x=q.front();
+         q.pop();
+         int distance=x.first;
+         int row=x.second.first;
+         int col=x.second.second;
+        //  d3(row,col,distance);
+         for(int i=0;i<4;i++){
+            int nr=row+dr[i];
+            int nc=col+dc[i];
+            if(check(nr,nc) && dist[nr][nc]>distance+1 && grid[nr][nc]==1){
+                dist[nr][nc]=distance+1;
+                q.push({dist[nr][nc],{nr,nc}});
+            }
+         }
+        }
+        return dist[destination.first][destination.second]==1e8?-1:dist[destination.first][destination.second];
+    }
+};
+

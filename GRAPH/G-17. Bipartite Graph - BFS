@@ -1,0 +1,59 @@
+https://leetcode.com/problems/is-graph-bipartite/description/
+
+
+
+What is a Bipartite graph ?
+->Any graph whose alternate nodes are colored differently is bipartite 
+If any of the adjacent node is of same color then it is not bipartite 
+
+So how to check if it is bipartite or not
+We just have to traverse the graph and color it while traversal
+By coloring i mean i will assign value 1 and 2 to every adjacent node 
+And if adjacent node is visited already and is also colored same then we will return false that it is not bipartite
+
+
+
+class Solution {
+public:
+    int n;
+    bool bfs(int node,vector<int>&vis,vector<int>&color,vector<vector<int>>& graph){
+        queue<int>q;
+        q.push(node);
+        vis[node]=1;
+        color[node]=1;
+        while(q.size()){
+            int size=q.size();
+            for(int i=0;i<size;i++){
+                int element=q.front();
+                q.pop();
+                for(int j=0;j<graph[element].size();j++){
+                    int adjacent=graph[element][j];
+                    if(vis[adjacent]==0){
+                        vis[adjacent]=1;
+                        q.push(adjacent);
+                        if(color[element]==1)color[adjacent]=2;
+                        else color[adjacent]=1;
+                    }
+                    if(vis[adjacent]==1 && color[element]==color[adjacent]){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+    bool isBipartite(vector<vector<int>>& graph) {
+        n=graph.size();
+        vector<int>color(n,-1),vis(n,0);
+        for(int i=0;i<n;i++){
+            if(vis[i]==0){
+                bool flag=bfs(i,vis,color,graph);
+                if(!flag)return 0; 
+            }
+        }
+        return 1;
+        //remember linear graph with no cycle is always bipartite 
+        //any graph with even cycle length is also bipartite 
+        //only odd cycle are not bipartite
+    }
+};

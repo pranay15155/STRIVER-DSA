@@ -1,0 +1,83 @@
+https://www.naukri.com/code360/problems/number-of-islands-ii_1266048?leftPanelTabValue=PROBLEM
+
+https://www.geeksforgeeks.org/problems/number-of-islands/1?utm_source=youtube&utm_medium=collab_striver_ytdescription&utm_campaign=number-of-islands
+
+
+#include<bits/stdc++.h>
+ int find_parent(int node,vector<int>&parent){
+        if(node==parent[node])return node;
+        return parent[node]=find_parent(parent[node],parent);
+    }
+    void union_by_size(int u,int v,vector<int>&parent,vector<int>&size){
+        int pu=find_parent(u,parent);
+        int pv=find_parent(v,parent);
+
+        if(pu!=pv){
+            if(size[pu]>size[pv]){
+                parent[pv]=pu;
+                size[pu]+=size[pv];
+                
+            }
+            else if(size[pu]==size[pv]){
+                parent[pv]=pu;
+                size[pu]+=size[pv];
+            }
+            else{
+                parent[pu]=pv;
+                size[pv]+=size[pu];
+            }
+        }
+    }
+    bool check(int &row, int &col,int n,int m) {
+        if (row < 0 || row >= n || col < 0 || col >= m)
+            return 0;
+        return 1;
+    }
+vector<int> numOfIslandsII(int n, int m, vector<vector<int>> &queries){
+	  vector<int> size(n * m, 1);
+    vector<int> parent(n * m);
+    iota(parent.begin(), parent.end(), 0); // Initialize parent array
+
+    vector<int> ans;
+    int count = 0;
+    vector<vector<int>> matrix(n, vector<int>(m, 0));
+    int dr[4] = {-1, 0, 1, 0};
+    int dc[4] = {0, 1, 0, -1};
+
+    for (auto& query : queries) {
+        int x = query[0];
+        int y = query[1];
+        int number = x * m + y;
+
+        // Skip if the cell is already land
+        if (matrix[x][y] == 1) {
+            ans.push_back(count);
+            continue;
+        }
+
+        // Mark the cell as part of an island
+        matrix[x][y] = 1;
+        count++;
+
+        // Check all four neighbors
+        for (int i = 0; i < 4; i++) {
+            int nx = x + dr[i];
+            int ny = y + dc[i];
+            int adj_number = nx * m + ny;
+
+            if (check(nx, ny, n, m) && matrix[nx][ny] == 1) {
+                int pu = find_parent(number, parent);
+                int pv = find_parent(adj_number, parent);
+
+                if (pu != pv) {
+                    union_by_size(number, adj_number, parent, size);
+                    count--;
+                }
+            }
+        }
+
+        ans.push_back(count);
+    }
+
+    return ans;
+}

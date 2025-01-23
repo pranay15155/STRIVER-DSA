@@ -1,0 +1,113 @@
+https://www.geeksforgeeks.org/problems/alien-dictionary/1
+
+
+class Solution {
+  public:
+   vector<int>toposort(vector<vector<int>>&adj){
+        int n=adj.size();
+        vector<int>indegree(n,0);
+        for(int i=0;i<n;i++){
+            for(int j=0;j<adj[i].size();j++){
+                indegree[adj[i][j]]++;
+            }
+        }
+        queue<int>q;
+        for(int i=1;i<n;i++){
+            if(indegree[i]==0)q.push(i);
+        }
+        vector<int>ans;
+        while(q.size()){
+            int size=q.size();
+            for(int i=0;i<size;i++){
+                int element=q.front();
+                q.pop();
+                ans.push_back(element);
+                for(auto &x:adj[element]){
+                    indegree[x]--;
+                    if(indegree[x]==0)q.push(x);
+                }
+            }
+        }
+        return ans;
+    }
+    string findOrder(vector<string> dict, int k) {
+        vector<vector<int>>adj(k+1);
+        for(int i=0;i<dict.size()-1;i++){
+            string x=dict[i];
+            string y=dict[i+1];
+            int j=0;
+            while(j<min(x.size(),y.size())){
+                int a=x[j]-'a'+1;
+                int b=y[j]-'a'+1;
+                if(a!=b)adj[a].push_back(b);
+                // cout<<a<<" "<<b<<endl;
+                if(x[j]!=y[j])break;
+                j++;
+
+            }
+        }
+        vector<int>ans=toposort(adj);
+        // d(ans);
+        // d(adj);
+        string answer="";
+        for(int i=0;i<ans.size();i++){
+            char a=char(ans[i]+int('a')-1);
+            answer+=a;
+        }
+        // cout<<answer<<endl;
+        return answer;
+    }
+};
+
+//same code just index changed nothing different dont worry just see one of the codes
+//i just wanted to save all my codes at one place that is why  saving both of them 
+
+
+class Solution{
+    public:
+    vector<int> topoSort(int V, vector<int> adj[]) 
+	{
+	    queue<int>q;
+	    vector<int>indegree(V,0);
+	    for(int i=0;i<V;i++){
+	        for(auto &v:adj[i]){
+	            indegree[v]++;
+	        }
+	    }
+	    for(int i=0;i<V;i++){
+	        if(indegree[i]==0){
+	            q.push(i);
+	        }
+	    }
+	    vector<int>ans;
+	    while(q.size()){
+	        int node=q.front();
+	        q.pop();
+	        ans.push_back(node);
+	        for(auto &v:adj[node]){
+	            indegree[v]--;
+	            if(indegree[v]==0)q.push(v);
+	        }
+	    }
+	    return ans;
+	}
+    string findOrder(string dict[], int N, int K) {
+        vector<int>adj[K];
+        for(int i=0;i<N-1;i++){
+            string one=dict[i];
+            string two=dict[i+1];
+            for(int j=0;j<min(one.size(),two.size());j++){
+                if(one[j]!=two[j]){
+                    adj[one[j]-'a'].push_back(two[j]-'a');
+                    break;
+                }
+            }
+        }
+        vector<int>ans=topoSort(K,adj);
+        string s;
+        for(int i=0;i<ans.size();i++){
+            s+=char(ans[i]+int('a'));
+        }
+        return s;
+    }
+};

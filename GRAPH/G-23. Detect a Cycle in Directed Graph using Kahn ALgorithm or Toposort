@@ -1,0 +1,38 @@
+https://www.geeksforgeeks.org/problems/detect-cycle-in-a-directed-graph/1
+
+Explanantion 
+Here simply we are trying to calculate toposort vector if a loop exist in between then the toposort vector will not be of the same size as n
+Because indegree will not be 0 of some elements and it will not get pushed in queue
+
+class Solution {
+  public:
+    bool isCyclic(int V, vector<vector<int>> adj) {
+       int n=adj.size();
+       vector<int>indegree(n,0);
+       for(int i=0;i<n;i++){
+           for(int j=0;j<adj[i].size();j++){
+               indegree[adj[i][j]]++;
+           }
+       }
+       queue<int>q;
+       for(int i=0;i<n;i++){
+           if(indegree[i]==0)q.push(i);
+       }
+       vector<int>ans;
+       while(q.size()){
+           int size=q.size();
+           for(int i=0;i<size;i++){
+               int element=q.front();
+               q.pop();
+               ans.push_back(element);
+               for(auto &t:adj[element]){
+                   indegree[t]--;
+                   if(indegree[t]==0)q.push(t);
+               }
+           }
+           
+       }
+       return ans.size()==n?0:1;
+    }
+};
+

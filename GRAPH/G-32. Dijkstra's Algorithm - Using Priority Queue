@@ -1,0 +1,35 @@
+
+https://www.geeksforgeeks.org/problems/implementing-dijkstra-set-1-adjacency-matrix/1
+
+
+class Solution {
+  public:
+
+    vector<int> dijkstra(vector<vector<pair<int, int>>> &adj, int src) {
+        // priority_queue<int,vector<int>,greater<int>>pq;
+         priority_queue<pair<int,int>,vector<pair<int,int>>,greater<pair<int,int>>>pq;
+         pq.push({0,src});   // [distance,node]
+         int n=adj.size();
+         vector<int>dist(n,1e8);
+         dist[src]=0;
+         while(pq.size()){
+             int node=pq.top().second;
+             int distance=pq.top().first;
+             pq.pop();
+             for(auto &v:adj[node]){
+                 int adj_node=v.first;
+                 int edge_wt=v.second;
+                 if(dist[adj_node]>distance+edge_wt){
+                    dist[adj_node]=distance+edge_wt;
+                    pq.push({dist[adj_node],adj_node});
+                 }
+             }
+         }
+         return dist;
+
+         
+
+    }
+};
+
+

@@ -1,0 +1,81 @@
+https://leetcode.com/problems/cheapest-flights-within-k-stops/
+
+class Solution {
+public:
+    int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int k) {
+        priority_queue<pair<int,pair<int,int>>,vector<pair<int,pair<int,int>>>,greater<pair<int,pair<int,int>>>>pq;
+        pq.push({0,{0,src}});//steps,distance,source
+        vector<vector<pair<int,int>>>adj(n);
+        for(int i=0;i<flights.size();i++){
+            int a=flights[i][0];
+            int b=flights[i][1];
+            int c=flights[i][2];
+            adj[a].push_back({b,c});
+        }
+        vector<int>dist(n,1e8);
+        dist[src]=0;
+        int ans=1e8;
+        while(pq.size()){
+           auto [steps,y]=pq.top();
+           pq.pop();
+           auto [distance,node]=y;
+           if(node==dst && steps<k+2){
+            ans=min(ans,distance);
+           }
+           for(auto&[adj_node,edge_wt]:adj[node]){
+              if(steps+1<k+2 && distance+edge_wt<=dist[adj_node]){
+                pq.push({steps+1,{distance+edge_wt,adj_node}});
+                dist[adj_node]=distance+edge_wt;
+              }
+           }
+        }
+        return ans==1e8?-1:ans;
+    }
+};
+
+
+//WRONG CODE 
+//  i have saved this code because i got confused and took distance as the sorting factor in min heap  for this question 
+//but i got wrong ans at this testcase
+
+n =5
+flights =[[0,1,5],[1,2,5],[0,3,2],[3,1,2],[1,4,1],[4,2,1]]
+src =0
+dst =2
+k =2
+Output ->9
+Expected ->7
+
+
+//i have also explained whats wrong with this code on this testcase on ipad notes so yu can look onto that
+
+
+class Solution {
+public:
+    int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int k) {
+        priority_queue<pair<int,pair<int,int>>,vector<pair<int,pair<int,int>>>,greater<pair<int,pair<int,int>>>>pq;
+        pq.push({0,{0,src}});
+        vector<vector<pair<int,int>>>adj(n);
+        for(int i=0;i<flights.size();i++){
+            int a=flights[i][0];
+            int b=flights[i][1];
+            int c=flights[i][2];
+            adj[a].push_back({b,c});
+        }
+        vector<int>dist(n,1e8);
+        dist[src]=0;
+        while(pq.size()){
+           auto [distance,y]=pq.top();
+           pq.pop();
+           auto [steps,node]=y;
+           if(node==dst)if(steps<=k+1)return distance;
+           for(auto&[adj_node,edge_wt]:adj[node]){
+              if(steps+1<k+2 && dist[adj_node]>=distance+edge_wt){
+                pq.push({distance+edge_wt,{steps+1,adj_node}});
+                dist[adj_node]=distance+edge_wt;
+              }
+           }
+        }
+        return -1;
+    }
+};

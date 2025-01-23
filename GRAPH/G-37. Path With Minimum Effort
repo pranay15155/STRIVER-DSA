@@ -1,0 +1,99 @@
+https://leetcode.com/problems/path-with-minimum-effort/description/
+
+
+class Solution {
+public:
+int n,m;
+    bool check(int &row, int &col) {
+        if (row < 0 || row >= n || col < 0 || col >= m)
+            return 0;
+        return 1;
+    }
+    int minimumEffortPath(vector<vector<int>>& heights) {
+        n=heights.size();
+        m=heights[0].size();
+        int dr[4] = {-1, 0, 1, 0};
+        int dc[4] = {0, 1, 0, -1};
+        vector<vector<int>>dist(n,vector<int>(m,1e8));
+        priority_queue<pair<int,pair<int,int>>,vector<pair<int,pair<int,int>>>,greater<pair<int,pair<int,int>>>>pq;
+        pq.push({0,{0,0}});
+        int ans=1e8;
+        dist[0][0]=0;
+        while(pq.size()){
+            auto [max_diff,y]=pq.top();
+            auto [row,col]=y;
+            pq.pop();
+            for(int i=0;i<4;i++){
+                int nr=row+dr[i];
+                int nc=col+dc[i];
+                if(check(nr,nc) && dist[nr][nc]>max(abs(heights[nr][nc]-heights[row][col]),max_diff)){
+                      dist[nr][nc]=max( abs(heights[nr][nc]-heights[row][col]) ,max_diff);
+                      pq.push({dist[nr][nc],{nr,nc}}); 
+                }
+            }
+
+        }
+        return dist[n-1][m-1];
+
+        
+    }
+};
+
+
+
+//below code is faster that is just because of 1 line that is i am returning whenever i find cell having coordinate n-1,m-1
+//this is faster because next all the iteration will give us more value of route's effort but we want to minimize it 
+//yu can understand it better by just checking the priority queue for this example
+//heights = [[1,2,2],[3,8,2],[5,3,5]]
+pq [ {0,{0,0}} ]
+pq [ {1,{0,1}} {2,{1,0}} ]
+pq [ {1,{0,2}} {2,{1,0}} {6,{1,1}} ]
+pq [ {1,{1,2}} {2,{1,0}} {6,{1,1}} ]
+pq [ {2,{1,0}} {3,{2,2}} {6,{1,1}} ]
+pq [ {2,{2,0}} {3,{2,2}} {5,{1,1}} {6,{1,1}} ]
+pq [ {2,{2,1}} {3,{2,2}} {5,{1,1}} {6,{1,1}} ]
+pq [ {2,{2,2}} {3,{2,2}} {5,{1,1}} {6,{1,1}} ]
+
+//A route's effort is the maximum absolute difference in heights between two consecutive cells of the route.
+
+
+
+
+class Solution {
+public:
+int n,m;
+    bool check(int &row, int &col) {
+        if (row < 0 || row >= n || col < 0 || col >= m)
+            return 0;
+        return 1;
+    }
+    int minimumEffortPath(vector<vector<int>>& heights) {
+        n=heights.size();
+        m=heights[0].size();
+        int dr[4] = {-1, 0, 1, 0};
+        int dc[4] = {0, 1, 0, -1};
+        vector<vector<int>>dist(n,vector<int>(m,1e8));
+        priority_queue<pair<int,pair<int,int>>,vector<pair<int,pair<int,int>>>,greater<pair<int,pair<int,int>>>>pq;
+        pq.push({0,{0,0}});
+        int ans=1e8;
+        dist[0][0]=0;
+        while(pq.size()){
+            auto [max_diff,y]=pq.top();
+            auto [row,col]=y;
+            pq.pop();
+            if(row==n-1 && col==m-1)return max_diff;
+            for(int i=0;i<4;i++){
+                int nr=row+dr[i];
+                int nc=col+dc[i];
+                if(check(nr,nc) && dist[nr][nc]>max(abs(heights[nr][nc]-heights[row][col]),max_diff)){
+                      dist[nr][nc]=max( abs(heights[nr][nc]-heights[row][col]) ,max_diff);
+                      pq.push({dist[nr][nc],{nr,nc}}); 
+                }
+            }
+
+        }
+        return dist[n-1][m-1];
+
+        
+    }
+};

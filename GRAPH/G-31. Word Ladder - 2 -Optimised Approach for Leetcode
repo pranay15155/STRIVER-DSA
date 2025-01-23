@@ -1,0 +1,155 @@
+https://leetcode.com/problems/word-ladder-ii/?source=submission-noac
+
+
+
+
+
+
+class Solution {
+public:
+    void f(string word, vector<string>& temp, vector<vector<string>>& ans,string& begin,map<string,int>&mp,map<string, int>&store) {
+        if (begin == word) {
+            temp.push_back(word);
+            vector<string>k=temp;
+            reverse(k.begin(),k.end());
+            ans.push_back(k);
+            temp.pop_back();
+            return ;
+        }
+        temp.push_back(word);
+        // d3(word,temp,ans);
+        for (int j = 0; j < word.size(); j++) {
+            for (int k = 0; k < 26; k++) {
+                string new_word = word;
+                char x = 'a' + k;
+                new_word[j] = x;
+                if (mp.find(new_word) != mp.end()) {
+                    if(store[word]>store[new_word]){
+                        f(new_word,temp,ans,begin,mp,store);
+                    }
+                }
+            }
+        }
+        temp.pop_back();
+    }
+    vector<vector<string>> findLadders(string begin, string end,vector<string>& wordlist) {
+        map<string, int> mp, vis, store;
+        for (int i = 0; i < wordlist.size(); i++) {
+            mp[wordlist[i]]++;
+        }
+        mp[begin]++;   //wordlist donot have begin word
+        queue<pair<string, int>> q;
+        q.push({begin, 1});
+        vis[begin]++;
+        store[begin] = 1;        //stores level at which word are to be used to reach our destination 
+        vector<vector<string>>ans;
+        while (q.size()) {
+            int size = q.size();
+            for (int i = 0; i < size; i++) {
+                auto [word, steps] = q.front();
+                q.pop();
+                if (word == end) {
+                    continue;
+                }
+                for (int j = 0; j < word.size(); j++) {
+                    for (int k = 0; k < 26; k++) {
+                        string temp = word;
+                        char x = 'a' + k;
+                        temp[j] = x;
+                        if (mp.find(temp) != mp.end() && vis[temp] == 0) {
+                            vis[temp]++;
+                            q.push({temp, steps + 1});
+                            store[temp] = steps + 1;
+                        }
+                    }
+                }
+            }
+        }
+        // d(store);
+        vector<string>temp;
+        f(end,temp,ans,begin,mp,store);
+        return ans;
+    }
+};
+
+//just another way to code both code are same bit first one is easier to understand 
+//remember wordlist donot have begin word push it in map 
+
+
+
+
+
+
+
+
+
+
+
+class Solution {
+public:
+
+vector<string> f(string &s,map<string,int>&mp){
+        vector<string>ans;
+        for(int i=0;i<s.size();i++){
+            for(int j=0;j<26;j++){
+                string new_temp=s;
+                char x=char('a'+j);
+                new_temp[i]=x;
+                if(new_temp!=s && mp.find(new_temp)!=mp.end()){
+                    ans.push_back(new_temp);
+                }
+            }
+        }
+        return ans;
+    }
+
+    void dfs(string &s,string &beginWord,vector<string>&temp, map<string,int>&level,vector<vector<string>>&ans,map<string,int>&mp){
+           vector<string>v=f(s,mp);
+        //    d2(s,v);
+           temp.push_back(s);
+           if(s==beginWord){
+            ans.push_back(temp);
+            }
+           for(int i=0;i<v.size();i++){
+            if(level[v[i]]<level[s]){
+               dfs(v[i],beginWord,temp,level,ans,mp);
+            }
+           }
+           temp.pop_back();
+    }
+
+    vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
+        map<string,int>mp,vis,level;
+        for(int i=0;i<wordList.size();i++){
+            mp[wordList[i]]++;
+        }
+        mp[beginWord]++;
+        queue<pair<string,int>>q;
+        q.push({beginWord,0});
+        vector<vector<string>> ans;
+        vis[beginWord]++;
+        level[beginWord]=0;
+        while(q.size()){
+            int size=q.size();
+            for(int i=0;i<size;i++){
+                auto x=q.front();
+                q.pop();
+                vector<string>temp=f(x.first,mp);
+                for(auto &z:temp){
+                    if(vis.find(z)==vis.end()){
+                       vis[z]++;
+                       level[z]=1+x.second;
+                       q.push({z,level[z]});
+                    }
+                }
+            }
+        }
+        // d(level);
+        vector<string>temp;
+        dfs(endWord,beginWord,temp,level,ans,mp);
+        for(int i=0;i<ans.size();i++){
+            reverse(ans[i].begin(),ans[i].end());
+        }
+        return ans;
+    }
+};
