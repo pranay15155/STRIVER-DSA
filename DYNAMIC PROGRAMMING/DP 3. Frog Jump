@@ -17,3 +17,61 @@ int frogJump(int n, vector<int> &heights)
      vector<int>dp(n+1,-1);
      return f(0,dp,n,heights);
 }
+
+//////////////////////////////////////MEMOISATION
+
+class Solution {
+  public:
+    int f(int ind,vector<int>& height,vector<int>& dp){
+        if(ind==0)return dp[ind]=0;
+        if(dp[ind]!=-1)return dp[ind];
+        int ans=1e9;
+        if(ind-1>=0)ans=min(ans,f(ind-1,height,dp)+abs(height[ind]-height[ind-1]));
+        if(ind-2>=0)ans=min(ans,f(ind-2,height,dp)+abs(height[ind]-height[ind-2]));
+        return dp[ind]=ans;
+
+    }
+    int minCost(vector<int>& height) {
+        int n=height.size();
+        vector<int>dp(n,-1);
+        int a=f(n-1,height,dp);
+        return a;
+    }
+};
+
+
+////////////////////////////////////////TABULATION
+
+class Solution {
+  public:
+    int minCost(vector<int>& height) {
+        int n=height.size();
+        vector<int>dp(n,0);
+        for(int ind=1;ind<n;ind++){
+            int ans=1e9;
+            if(ind-1>=0)ans=min(ans,dp[ind-1]+abs(height[ind]-height[ind-1]));
+            if(ind-2>=0)ans=min(ans,dp[ind-2]+abs(height[ind]-height[ind-2]));
+            dp[ind]=ans;
+        }
+        return dp[n-1];
+    }
+};
+
+
+///////////////////////////////////SPACE OPTIMIZATION 
+
+class Solution {
+  public:
+    int minCost(vector<int>& height) {
+        int n=height.size();
+        int prev1=0,prev2=0;
+        for(int ind=1;ind<n;ind++){
+            int ans=1e9;
+            if(ind-1>=0)ans=min(ans,prev1+abs(height[ind]-height[ind-1]));
+            if(ind-2>=0)ans=min(ans,prev2+abs(height[ind]-height[ind-2]));
+            prev2=prev1;
+            prev1=ans;
+        }
+        return prev1;
+    }
+};
