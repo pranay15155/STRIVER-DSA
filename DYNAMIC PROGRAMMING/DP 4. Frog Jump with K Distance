@@ -21,3 +21,23 @@ class Solution {
     }
 };
 
+
+////////TABULATION 
+
+class Solution {
+  public:
+    int minimizeCost(int k, vector<int>& arr) {
+       int n=arr.size();
+       vector<int>dp(n,0);
+       for(int ind=1;ind<n;ind++){
+           int ans=1e9;
+           for(int j=1;j<=k;j++){
+               if(ind-j>=0)ans=min(ans,dp[ind-j]+abs(arr[ind]-arr[ind-j]));
+           }
+           dp[ind]=ans;
+       }
+       return dp[n-1];
+       
+       
+    }
+};
