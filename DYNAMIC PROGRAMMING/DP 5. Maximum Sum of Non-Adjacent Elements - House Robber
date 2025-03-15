@@ -93,3 +93,25 @@ public:
         return dp[n-1];
     }
 };
+
+////////////////////////TABULATION
+
+
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        int n=nums.size();
+        vector<int>dp(n,0);
+        dp[0]=nums[0];
+        for(int ind=1;ind<n;ind++){
+            int take=nums[ind],not_take=0;
+            if(ind-2>=0)take=max(take,dp[ind-2]+nums[ind]);
+            not_take=dp[ind-1];
+            dp[ind]=max(take,not_take);
+        }
+        return dp[n-1];
+    }
+};
+
+
+
