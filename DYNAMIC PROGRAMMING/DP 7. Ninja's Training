@@ -53,3 +53,32 @@ class Solution {
         
     }
 };
+
+
+///////////////////////SPACE OPTIMIZATION
+
+class Solution {
+  public:
+    int maximumPoints(vector<vector<int>>& arr) {
+        
+        int n=arr.size();
+        vector<int>prev(3,0),curr(3,0);
+        prev[0]=arr[0][0];
+        prev[1]=arr[0][1];
+        prev[2]=arr[0][2];
+        
+        for(int ind=1;ind<n;ind++){
+            for(int cur=0;cur<3;cur++){
+                int ans=0;
+               for(int pre=0;pre<3;pre++){
+                   if(pre!=cur){
+                       ans=max(ans,prev[pre]+arr[ind][cur]);
+                   }
+               }
+               curr[cur]=ans;
+            }
+            prev=curr;
+        }
+        return max({curr[0],curr[1],curr[2]});
+    }
+};
