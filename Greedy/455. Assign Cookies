@@ -24,3 +24,6 @@ public:
 //Intutuion -->Assigning larger no of ccokies to someone who have large greed 
 //and if that no of cookie is not present than we move to someone who has less greed
 //and hence optimising the no of content children
+
+
+//SAME QUESTION --> 2410. Maximum Matching of Players With Trainers
