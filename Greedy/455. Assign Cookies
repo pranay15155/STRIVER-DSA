@@ -1,0 +1,26 @@
+https://leetcode.com/problems/assign-cookies/description/
+
+class Solution {
+public:
+    int findContentChildren(vector<int>& g, vector<int>& s) {
+        sort(g.begin(),g.end());
+        sort(s.begin(),s.end());
+        int cookie=s.size()-1;
+        int child=g.size()-1;
+        int ans=0;
+        while(cookie>-1 && child>-1){
+            if(s[cookie]>=g[child]){
+                cookie--;
+                child--;
+                ans++;
+            }
+            else {
+                child--;
+            }
+        }
+        return ans;
+    }
+};
+//Intutuion -->Assigning larger no of ccokies to someone who have large greed 
+//and if that no of cookie is not present than we move to someone who has less greed
+//and hence optimising the no of content children
