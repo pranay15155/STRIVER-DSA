@@ -1,5 +1,31 @@
 https://www.geeksforgeeks.org/problems/perfect-sum-problem5633/1?utm_source=youtube&utm_medium=collab_striver_ytdescription&utm_campaign=perfect-sum-problem
 
+
+class Solution {
+  public:
+    int f(int ind,int sum,vector<int>& arr,vector<vector<int>>&dp){
+        int n=arr.size();
+        if(ind==n-1){
+            if (sum == 0 && arr[ind] == 0) return 2; // include or exclude zero
+            if (sum == 0) return 1;                  // exclude last element
+            if (sum == arr[ind]) return 1;           // include last element
+            return 0;
+        }
+        if(sum<0)return 0;
+        if(dp[ind][sum]!=-1)return dp[ind][sum];
+        int take=f(ind+1,sum-arr[ind],arr,dp);
+        int not_take=f(ind+1,sum,arr,dp);
+        return dp[ind][sum]=take+not_take;
+    }
+    int perfectSum(vector<int>& arr, int target) {
+        int n=arr.size();
+        vector<vector<int>>dp(n,vector<int>(target+1,-1));
+        return f(0,target,arr,dp);
+    }
+};
+
+
+
 class Solution {
   public:
      int f(int ind,int sum,vector<int>& arr,vector<vector<int>>&dp,int n){
