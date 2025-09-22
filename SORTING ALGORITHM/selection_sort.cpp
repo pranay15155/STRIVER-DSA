@@ -52,3 +52,8 @@ int main()
     cout << v;
     return 0;
 }
+//Time Complexity
+
+// Best-> O(N^2)
+// Worst-> O(N^2)
+// Average-> O(N^2)
